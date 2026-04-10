@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: online-ordering-backend
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/online_ordering
+    username: root
+    password: 123456
+
+# MyBatis 配置
+mybatis:
+  # mapper 配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.ruomeng.onlineorderingbackend.model.entity
+  configuration:
+    # 开启驼峰命名
+    map-underscore-to-camel-case: true
+
+# knife4j 配置 
+knife4j:
+  enable: true
+  openapi:
+    title: 在线点餐系统 API 文档
+    description: 在线点餐系统后端接口文档
+    version: 1.0
+    group:
+      default:
+        api-rule: package
+        api-rule-resources:
+          - com.ruomeng.onlineorderingbackend.controller
+
+# JWT 配置
+jwt:
+  # 密钥（至少 32 个字符，256 位）
+  secret: ruomeng-online-ordering-backend-jwt
+  # 过期时间（单位：秒，默认 2 小时）
+  expiration: 7200
+
+# 日志配置
+logging:
+  level:
+    com.ruomeng.onlineorderingbackend.mapper: debug
+    com.ruomeng.onlineorderingbackend.service: info
+    com.ruomeng.onlineorderingbackend.controller: info
