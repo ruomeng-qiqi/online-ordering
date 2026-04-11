@@ -2,13 +2,14 @@ package com.ruomeng.onlineorderingbackend.model.entity;
 
 import lombok.Data;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * 菜品分类
+ * 分类实体
  */
 @Data
 public class Category implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 分类ID
@@ -18,22 +19,30 @@ public class Category implements Serializable {
     /**
      * 分类名称
      */
-    private String categoryName;
+    private String name;
 
     /**
-     * 排序顺序，数字越小越靠前
+     * 分类类型：1-菜品分类，2-套餐分类
      */
-    private Integer sortOrder;
+    private Integer type;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
+
+    /**
+     * 状态：0-禁用，1-启用
+     */
+    private Integer status;
 
     /**
      * 创建时间
      */
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
-    private Date updateTime;
-
-    private static final long serialVersionUID = 1L;
+    private LocalDateTime updateTime;
 }

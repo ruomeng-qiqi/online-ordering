@@ -9,7 +9,6 @@
               <Food />
             </el-icon>
             <h1 class="system-title">在线点餐管理系统</h1>
-            <p class="system-subtitle">Online Ordering Management System</p>
           </div>
           <div class="feature-list">
             <div class="feature-item">

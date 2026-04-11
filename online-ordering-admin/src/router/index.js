@@ -26,10 +26,34 @@ const routes = [
         meta: { title: '菜品管理' }
       },
       {
+        path: 'dish/edit',
+        name: 'DishEdit',
+        component: () => import('@/views/Dish/Edit.vue'),
+        meta: { title: '菜品编辑' }
+      },
+      {
         path: 'category',
         name: 'Category',
         component: () => import('@/views/Category/Index.vue'),
         meta: { title: '分类管理' }
+      },
+      {
+        path: 'setmeal',
+        name: 'Setmeal',
+        component: () => import('@/views/Setmeal/Index.vue'),
+        meta: { title: '套餐管理' }
+      },
+      {
+        path: 'setmeal/edit',
+        name: 'SetmealEdit',
+        component: () => import('@/views/Setmeal/Edit.vue'),
+        meta: { title: '套餐编辑' }
+      },
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/Table/Index.vue'),
+        meta: { title: '餐台管理' }
       },
       {
         path: 'order',

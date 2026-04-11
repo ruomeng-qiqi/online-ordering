@@ -2,50 +2,34 @@ package com.ruomeng.onlineorderingbackend.model.entity;
 
 import lombok.Data;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 菜品实体
+ * 菜品口味实体
  */
 @Data
-public class Dish implements Serializable {
+public class DishFlavor implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 菜品ID
+     * 口味ID
      */
     private Long id;
 
     /**
-     * 菜品名称
+     * 菜品ID
+     */
+    private Long dishId;
+
+    /**
+     * 口味名称
      */
     private String name;
 
     /**
-     * 分类ID
+     * 口味选项（JSON数组格式）
      */
-    private Long categoryId;
-
-    /**
-     * 价格
-     */
-    private BigDecimal price;
-
-    /**
-     * 图片路径
-     */
-    private String image;
-
-    /**
-     * 描述
-     */
-    private String description;
-
-    /**
-     * 状态：0-停售，1-起售
-     */
-    private Integer status;
+    private String value;
 
     /**
      * 创建时间

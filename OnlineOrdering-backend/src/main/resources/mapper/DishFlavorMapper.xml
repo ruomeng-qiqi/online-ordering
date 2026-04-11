@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruomeng.onlineorderingbackend.mapper.DishFlavorMapper">
+
+    <!-- 批量插入口味 -->
+    <insert id="insertBatch">
+        INSERT INTO dish_flavor (dish_id, name, value, create_time, update_time)
+        VALUES
+        <foreach collection="flavors" item="flavor" separator=",">
+            (#{flavor.dishId}, #{flavor.name}, #{flavor.value}, #{flavor.createTime}, #{flavor.updateTime})
+        </foreach>
+    </insert>
+
+</mapper>

@@ -1,49 +1,38 @@
-package com.ruomeng.onlineorderingbackend.model.entity;
+package com.ruomeng.onlineorderingbackend.model.vo;
 
 import lombok.Data;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 菜品实体
+ * 分类VO
  */
 @Data
-public class Dish implements Serializable {
+public class CategoryVO implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 菜品ID
-     */
-    private Long id;
-
-    /**
-     * 菜品名称
-     */
-    private String name;
 
     /**
      * 分类ID
      */
-    private Long categoryId;
+    private Long id;
 
     /**
-     * 价格
+     * 分类名称
      */
-    private BigDecimal price;
+    private String name;
 
     /**
-     * 图片路径
+     * 分类类型：1-菜品分类，2-套餐分类
      */
-    private String image;
+    private Integer type;
 
     /**
-     * 描述
+     * 排序
      */
-    private String description;
+    private Integer sort;
 
     /**
-     * 状态：0-停售，1-起售
+     * 状态：0-禁用，1-启用
      */
     private Integer status;
 

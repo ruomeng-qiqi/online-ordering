@@ -10,9 +10,6 @@ public interface AdminService {
 
     /**
      * 管理员登录
-     *
-     * @param loginDTO 登录请求
-     * @return 登录响应
      */
     AdminLoginVO login(AdminLoginDTO loginDTO);
 }

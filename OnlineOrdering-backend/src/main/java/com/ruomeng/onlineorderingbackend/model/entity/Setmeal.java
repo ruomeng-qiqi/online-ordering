@@ -6,19 +6,19 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 菜品实体
+ * 套餐实体
  */
 @Data
-public class Dish implements Serializable {
+public class Setmeal implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 菜品ID
+     * 套餐ID
      */
     private Long id;
 
     /**
-     * 菜品名称
+     * 套餐名称
      */
     private String name;
 
@@ -28,7 +28,7 @@ public class Dish implements Serializable {
     private Long categoryId;
 
     /**
-     * 价格
+     * 套餐价格
      */
     private BigDecimal price;
 

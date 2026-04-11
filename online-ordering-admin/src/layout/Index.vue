@@ -28,6 +28,16 @@
           <span>菜品管理</span>
         </el-menu-item>
         
+        <el-menu-item index="/setmeal">
+          <el-icon><Box /></el-icon>
+          <span>套餐管理</span>
+        </el-menu-item>
+        
+        <el-menu-item index="/table">
+          <el-icon><Grid /></el-icon>
+          <span>餐台管理</span>
+        </el-menu-item>
+        
         <el-menu-item index="/order">
           <el-icon><Document /></el-icon>
           <span>订单管理</span>
@@ -85,6 +95,8 @@ import {
   HomeFilled,
   Menu,
   Food,
+  Box,
+  Grid,
   Document,
   User,
   ArrowDown

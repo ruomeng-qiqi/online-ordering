@@ -29,7 +29,7 @@ request.interceptors.response.use(
   response => {
     const res = response.data
     
-    // 如果返回的状态码不是 200，说明接口有问题
+    // 后端返回的成功状态码是 200
     if (res.code !== 200) {
       ElMessage.error(res.message || '请求失败')
       

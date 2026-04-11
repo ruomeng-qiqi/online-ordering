@@ -1,16 +1,16 @@
 <template>
-  <div class="dish-container">
+  <div class="setmeal-container">
     <el-card>
       <!-- 搜索栏 -->
       <div class="search-bar">
-        <span style="margin-right: 10px; font-size: 14px; white-space: nowrap;">菜品名称:</span>
+        <span style="margin-right: 10px; font-size: 14px; white-space: nowrap;">套餐名称:</span>
         <el-input 
           v-model="searchName" 
-          placeholder="请输入菜品名称" 
+          placeholder="请输入套餐名称" 
           style="width: 150px; margin-right: 15px;"
           clearable
         />
-        <span style="margin-right: 10px; font-size: 14px; white-space: nowrap;">菜品分类:</span>
+        <span style="margin-right: 10px; font-size: 14px; white-space: nowrap;">套餐分类:</span>
         <el-select 
           v-model="searchCategoryId" 
           placeholder="请选择" 
@@ -39,17 +39,17 @@
         <div style="flex: 1"></div>
         
         <el-button @click="handleBatchDelete">批量删除</el-button>
-        <el-button type="primary" @click="handleAdd">+ 新增菜品</el-button>
+        <el-button type="primary" @click="handleAdd">+ 新增套餐</el-button>
       </div>
 
       <el-table 
-        :data="dishList" 
+        :data="setmealList" 
         v-loading="loading"
         style="width: 100%; margin-top: 20px;"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="菜品名称" min-width="120" />
+        <el-table-column prop="name" label="套餐名称" min-width="120" />
         <el-table-column label="图片" min-width="100">
           <template #default="{ row }">
             <el-image 
@@ -59,8 +59,8 @@
             />
           </template>
         </el-table-column>
-        <el-table-column prop="category" label="菜品分类" min-width="120" />
-        <el-table-column prop="price" label="售价" min-width="100">
+        <el-table-column prop="category" label="套餐分类" min-width="120" />
+        <el-table-column prop="price" label="套餐价" min-width="100">
           <template #default="{ row }">
             ¥ {{ row.price }}
           </template>
@@ -103,8 +103,8 @@
         :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
         style="margin-top: 20px; justify-content: flex-end;"
-        @size-change="loadDishList"
-        @current-change="loadDishList"
+        @size-change="loadSetmealList"
+        @current-change="loadSetmealList"
       />
     </el-card>
   </div>
@@ -114,7 +114,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getDishPage, deleteDish, deleteDishBatch, updateDishStatus } from '@/api/dish'
+import { getSetmealPage, deleteSetmeal, deleteSetmealBatch, updateSetmealStatus } from '@/api/setmeal'
 import { getCategoryPage } from '@/api/category'
 
 const router = useRouter()
@@ -127,7 +127,7 @@ const loading = ref(false)
 const categoryList = ref([])
 
 // 分页数据
-const dishList = ref([])
+const setmealList = ref([])
 const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -141,7 +141,7 @@ const formatDateTime = (dateTime) => {
 // 加载分类列表
 const loadCategoryList = async () => {
   try {
-    const response = await getCategoryPage({ page: 1, pageSize: 100, type: 1 })
+    const response = await getCategoryPage({ page: 1, pageSize: 100, type: 2 })
     if (response.code === 200) {
       categoryList.value = response.data.records
     }
@@ -150,8 +150,8 @@ const loadCategoryList = async () => {
   }
 }
 
-// 加载菜品列表
-const loadDishList = async () => {
+// 加载套餐列表
+const loadSetmealList = async () => {
   loading.value = true
   try {
     const params = {
@@ -171,15 +171,15 @@ const loadDishList = async () => {
       params.status = searchStatus.value
     }
     
-    const response = await getDishPage(params)
+    const response = await getSetmealPage(params)
     if (response.code === 200) {
-      dishList.value = response.data.records
+      setmealList.value = response.data.records
       total.value = response.data.total
     } else {
       ElMessage.error(response.message || '查询失败')
     }
   } catch (error) {
-    console.error('查询菜品列表失败:', error)
+    console.error('查询套餐列表失败:', error)
   } finally {
     loading.value = false
   }
@@ -188,7 +188,7 @@ const loadDishList = async () => {
 // 搜索
 const handleSearch = () => {
   currentPage.value = 1
-  loadDishList()
+  loadSetmealList()
 }
 
 // 选择变化
@@ -199,40 +199,40 @@ const handleSelectionChange = (selection) => {
 // 批量删除
 const handleBatchDelete = async () => {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning('请选择要删除的菜品')
+    ElMessage.warning('请选择要删除的套餐')
     return
   }
   
   try {
-    await ElMessageBox.confirm(`确定要删除选中的 ${selectedRows.value.length} 个菜品吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要删除选中的 ${selectedRows.value.length} 个套餐吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
     const ids = selectedRows.value.map(row => row.id)
-    const response = await deleteDishBatch(ids)
+    const response = await deleteSetmealBatch(ids)
     if (response.code === 200) {
       ElMessage.success('删除成功')
-      loadDishList()
+      loadSetmealList()
     } else {
       ElMessage.error(response.message || '删除失败')
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('批量删除菜品失败:', error)
+      console.error('批量删除套餐失败:', error)
     }
   }
 }
 
-// 添加菜品
+// 添加套餐
 const handleAdd = () => {
-  router.push('/dish/edit')
+  router.push('/setmeal/edit')
 }
 
-// 编辑菜品
+// 编辑套餐
 const handleEdit = (row) => {
-  router.push(`/dish/edit?id=${row.id}`)
+  router.push(`/setmeal/edit?id=${row.id}`)
 }
 
 // 切换状态
@@ -241,16 +241,16 @@ const handleToggleStatus = async (row) => {
   const statusText = newStatus === 1 ? '起售' : '停售'
   
   try {
-    await ElMessageBox.confirm(`确定要${statusText}该菜品吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要${statusText}该套餐吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
-    const response = await updateDishStatus(row.id, newStatus)
+    const response = await updateSetmealStatus(row.id, newStatus)
     if (response.code === 200) {
       ElMessage.success(`${statusText}成功`)
-      loadDishList()
+      loadSetmealList()
     } else {
       ElMessage.error(response.message || `${statusText}失败`)
     }
@@ -261,25 +261,25 @@ const handleToggleStatus = async (row) => {
   }
 }
 
-// 删除菜品
+// 删除套餐
 const handleDelete = async (row) => {
   try {
-    await ElMessageBox.confirm('确定要删除该菜品吗？', '提示', {
+    await ElMessageBox.confirm('确定要删除该套餐吗？', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
-    const response = await deleteDish(row.id)
+    const response = await deleteSetmeal(row.id)
     if (response.code === 200) {
       ElMessage.success('删除成功')
-      loadDishList()
+      loadSetmealList()
     } else {
       ElMessage.error(response.message || '删除失败')
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('删除菜品失败:', error)
+      console.error('删除套餐失败:', error)
     }
   }
 }
@@ -287,12 +287,12 @@ const handleDelete = async (row) => {
 // 页面加载时获取数据
 onMounted(() => {
   loadCategoryList()
-  loadDishList()
+  loadSetmealList()
 })
 </script>
 
 <style scoped>
-.dish-container {
+.setmeal-container {
   padding: 20px;
 }
 

@@ -1,19 +1,19 @@
-package com.ruomeng.onlineorderingbackend.model.entity;
+package com.ruomeng.onlineorderingbackend.model.dto;
 
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 菜品实体
+ * 菜品DTO
  */
 @Data
-public class Dish implements Serializable {
+public class DishDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 菜品ID
+     * 菜品ID（编辑时需要）
      */
     private Long id;
 
@@ -43,17 +43,20 @@ public class Dish implements Serializable {
     private String description;
 
     /**
-     * 状态：0-停售，1-起售
+     * 口味列表
      */
-    private Integer status;
+    private List<FlavorDTO> flavors;
 
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
+    @Data
+    public static class FlavorDTO {
+        /**
+         * 口味名称
+         */
+        private String name;
 
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+        /**
+         * 口味选项
+         */
+        private List<String> options;
+    }
 }

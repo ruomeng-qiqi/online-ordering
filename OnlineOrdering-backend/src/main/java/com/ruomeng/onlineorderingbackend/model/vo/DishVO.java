@@ -1,15 +1,16 @@
-package com.ruomeng.onlineorderingbackend.model.entity;
+package com.ruomeng.onlineorderingbackend.model.vo;
 
 import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 菜品实体
+ * 菜品VO
  */
 @Data
-public class Dish implements Serializable {
+public class DishVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -26,6 +27,11 @@ public class Dish implements Serializable {
      * 分类ID
      */
     private Long categoryId;
+
+    /**
+     * 分类名称
+     */
+    private String category;
 
     /**
      * 价格
@@ -48,6 +54,11 @@ public class Dish implements Serializable {
     private Integer status;
 
     /**
+     * 口味列表
+     */
+    private List<FlavorVO> flavors;
+
+    /**
      * 创建时间
      */
     private LocalDateTime createTime;
@@ -56,4 +67,17 @@ public class Dish implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    @Data
+    public static class FlavorVO {
+        /**
+         * 口味名称
+         */
+        private String name;
+
+        /**
+         * 口味选项
+         */
+        private List<String> options;
+    }
 }
