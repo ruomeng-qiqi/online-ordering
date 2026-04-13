@@ -107,3 +107,76 @@ INSERT INTO dish_flavor (dish_id, name, value) VALUES
 INSERT INTO setmeal (name, category_id, price, image, description, status) VALUES 
 ('人气套餐A计划', 9, 45.00, 'https://via.placeholder.com/100', '包含主食、饮料、甜点，营养均衡', 1);
 
+-- 餐台表
+CREATE TABLE IF NOT EXISTS dining_table (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '餐台ID',
+    table_number VARCHAR(20) NOT NULL UNIQUE COMMENT '餐台号',
+    table_name VARCHAR(50) NOT NULL COMMENT '餐台名称',
+    seats INT NOT NULL COMMENT '座位数',
+    status INT DEFAULT 0 COMMENT '状态：0-空闲，1-占用',
+    qr_code VARCHAR(255) COMMENT '二维码URL',
+    sort INT DEFAULT 0 COMMENT '排序',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_table_number (table_number),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='餐台表';
+
+-- 插入示例餐台数据
+INSERT INTO dining_table (table_number, table_name, seats, status, sort) VALUES 
+('A01', '大厅A01', 4, 0, 1),
+('A02', '大厅A02', 4, 0, 2),
+('A03', '大厅A03', 2, 0, 3),
+('B01', '包厢B01', 6, 0, 4),
+('B02', '包厢B02', 8, 0, 5);
+
+-- 顾客表
+CREATE TABLE IF NOT EXISTS customer (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '顾客ID',
+    openid VARCHAR(100) NOT NULL UNIQUE COMMENT '微信openid',
+    nickname VARCHAR(100) COMMENT '昵称',
+    avatar VARCHAR(255) COMMENT '头像URL',
+    gender TINYINT DEFAULT 0 COMMENT '性别：0-未知，1-男，2-女',
+    is_member TINYINT DEFAULT 0 COMMENT '是否会员：0-否，1-是',
+    points INT DEFAULT 0 COMMENT '当前积分',
+    total_points INT DEFAULT 0 COMMENT '累计积分',
+    status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_openid (openid),
+    INDEX idx_is_member (is_member),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='顾客表';
+
+-- 积分记录表
+CREATE TABLE IF NOT EXISTS points_record (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '积分记录ID',
+    customer_id BIGINT NOT NULL COMMENT '顾客ID',
+    type TINYINT NOT NULL COMMENT '类型：1-订单获得，2-积分抵扣，3-手动调整',
+    points INT NOT NULL COMMENT '积分变动（正数增加，负数减少）',
+    order_id BIGINT COMMENT '关联订单ID',
+    remark VARCHAR(200) DEFAULT '管理员手动调整' COMMENT '备注',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_type (type),
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='积分记录表';
+
+-- 插入示例顾客数据
+INSERT INTO customer (openid, nickname, avatar, gender, is_member, points, total_points, status, create_time, update_time) VALUES 
+('wx_test_001', '张三', 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png', 1, 1, 1580, 3200, 1, '2026-04-01 10:30:00', '2026-04-10 15:20:00'),
+('wx_test_002', '李四', 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png', 2, 0, 0, 0, 1, '2026-04-02 14:20:00', '2026-04-12 09:15:00'),
+('wx_test_003', '王五', '', 1, 1, 520, 1850, 0, '2026-04-03 09:15:00', '2026-04-11 16:30:00'),
+('wx_test_004', '赵六', 'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png', 0, 0, 0, 0, 1, '2026-04-05 16:45:00', '2026-04-13 08:10:00'),
+('wx_test_005', '钱七', '', 2, 1, 2350, 5600, 1, '2026-04-10 11:30:00', '2026-04-13 10:25:00'),
+('wx_test_006', '孙八', 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg', 1, 0, 0, 0, 1, '2026-04-13 08:20:00', '2026-04-13 08:20:00');
+
+-- 插入示例积分记录数据
+INSERT INTO points_record (customer_id, type, points, order_id, remark, create_time) VALUES 
+(1, 1, 100, 1001, '订单消费获得', '2026-04-10 15:20:00'),
+(1, 2, -50, 1002, '积分抵扣', '2026-04-09 12:30:00'),
+(1, 3, 200, NULL, '管理员手动调整', '2026-04-08 10:15:00'),
+(1, 1, 80, 1003, '订单消费获得', '2026-04-05 18:45:00'),
+(3, 1, 150, 1004, '订单消费获得', '2026-04-11 16:30:00'),
+(5, 1, 200, 1005, '订单消费获得', '2026-04-13 10:25:00'),
+(5, 3, 500, NULL, '会员充值赠送', '2026-04-10 11:30:00');

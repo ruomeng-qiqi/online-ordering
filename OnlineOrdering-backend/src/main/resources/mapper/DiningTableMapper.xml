@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruomeng.onlineorderingbackend.mapper.DiningTableMapper">
+
+    <!-- 插入餐台 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO dining_table (table_number, table_name, seats, status, qr_code, sort, create_time, update_time)
+        VALUES (#{tableNumber}, #{tableName}, #{seats}, #{status}, #{qrCode}, #{sort}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!-- 更新餐台 -->
+    <update id="update">
+        UPDATE dining_table
+        SET table_number = #{tableNumber},
+            table_name = #{tableName},
+            seats = #{seats},
+            qr_code = #{qrCode},
+            sort = #{sort},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量删除餐台 -->
+    <delete id="deleteBatchByIds">
+        DELETE FROM dining_table
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 分页查询餐台 -->
+    <select id="pageQuery" resultType="com.ruomeng.onlineorderingbackend.model.entity.DiningTable">
+        SELECT * FROM dining_table
+        <where>
+            <if test="tableNumber != null and tableNumber != ''">
+                AND table_number LIKE CONCAT('%', #{tableNumber}, '%')
+            </if>
+            <if test="tableName != null and tableName != ''">
+                AND table_name LIKE CONCAT('%', #{tableName}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY sort ASC, update_time DESC
+    </select>
+
+</mapper>

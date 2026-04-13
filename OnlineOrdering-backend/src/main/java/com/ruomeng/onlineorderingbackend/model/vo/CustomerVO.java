@@ -1,25 +1,20 @@
-package com.ruomeng.onlineorderingbackend.model.entity;
+package com.ruomeng.onlineorderingbackend.model.vo;
 
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 顾客实体
+ * 顾客VO
  */
 @Data
-public class Customer implements Serializable {
+public class CustomerVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * 顾客ID
      */
     private Long id;
-
-    /**
-     * 微信openid
-     */
-    private String openid;
 
     /**
      * 昵称

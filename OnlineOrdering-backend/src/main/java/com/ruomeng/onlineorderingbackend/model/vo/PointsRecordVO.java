@@ -1,25 +1,20 @@
-package com.ruomeng.onlineorderingbackend.model.entity;
+package com.ruomeng.onlineorderingbackend.model.vo;
 
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 积分记录实体
+ * 积分记录VO
  */
 @Data
-public class PointsRecord implements Serializable {
+public class PointsRecordVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
      * 积分记录ID
      */
     private Long id;
-
-    /**
-     * 顾客ID
-     */
-    private Long customerId;
 
     /**
      * 类型：1-订单获得，2-积分抵扣，3-手动调整

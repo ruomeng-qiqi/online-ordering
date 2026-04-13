@@ -66,6 +66,12 @@ const routes = [
         name: 'Customer',
         component: () => import('@/views/Customer/Index.vue'),
         meta: { title: '顾客管理' }
+      },
+      {
+        path: 'customer/detail/:id',
+        name: 'CustomerDetail',
+        component: () => import('@/views/Customer/Detail.vue'),
+        meta: { title: '顾客详情' }
       }
     ]
   }
