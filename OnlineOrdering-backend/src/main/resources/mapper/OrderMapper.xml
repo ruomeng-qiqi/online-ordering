@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruomeng.onlineorderingbackend.mapper.OrderMapper">
+
+    <resultMap id="OrderVOMap" type="com.ruomeng.onlineorderingbackend.model.vo.OrderVO">
+        <id property="id" column="id"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="isMember" column="is_member"/>
+        <result property="tableId" column="table_id"/>
+        <result property="tableNumber" column="table_number"/>
+        <result property="tableName" column="table_name"/>
+        <result property="checkoutTime" column="checkout_time"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="actualAmount" column="actual_amount"/>
+        <result property="discountAmount" column="discount_amount"/>
+        <result property="pointsDeduction" column="points_deduction"/>
+        <result property="pointsUsed" column="points_used"/>
+        <result property="pointsEarned" column="points_earned"/>
+        <result property="paymentMethod" column="payment_method"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="remark" column="remark"/>
+        <result property="cancelReason" column="cancel_reason"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- 分页查询订单列表 -->
+    <select id="pageQuery" resultMap="OrderVOMap">
+        SELECT
+            o.id,
+            o.order_number,
+            o.customer_id,
+            c.nickname AS customer_name,
+            c.is_member,
+            o.table_id,
+            t.table_number,
+            t.table_name,
+            o.checkout_time,
+            o.total_amount,
+            o.actual_amount,
+            o.discount_amount,
+            o.points_deduction,
+            o.points_used,
+            o.points_earned,
+            o.payment_method,
+            o.order_status,
+            o.remark,
+            o.cancel_reason,
+            o.create_time,
+            o.update_time
+        FROM orders o
+        LEFT JOIN customer c ON o.customer_id = c.id
+        LEFT JOIN dining_table t ON o.table_id = t.id
+        <where>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND o.order_number LIKE CONCAT('%', #{orderNumber}, '%')
+            </if>
+            <if test="customerNickname != null and customerNickname != ''">
+                AND c.nickname LIKE CONCAT('%', #{customerNickname}, '%')
+            </if>
+            <if test="tableNumber != null and tableNumber != ''">
+                AND t.table_number LIKE CONCAT('%', #{tableNumber}, '%')
+            </if>
+            <if test="orderStatus != null">
+                AND o.order_status = #{orderStatus}
+            </if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <!-- 更新订单 -->
+    <update id="update">
+        UPDATE orders
+        <set>
+            <if test="totalAmount != null">
+                total_amount = #{totalAmount},
+            </if>
+            <if test="actualAmount != null">
+                actual_amount = #{actualAmount},
+            </if>
+            <if test="discountAmount != null">
+                discount_amount = #{discountAmount},
+            </if>
+            <if test="pointsDeduction != null">
+                points_deduction = #{pointsDeduction},
+            </if>
+            <if test="pointsUsed != null">
+                points_used = #{pointsUsed},
+            </if>
+            <if test="pointsEarned != null">
+                points_earned = #{pointsEarned},
+            </if>
+            <if test="paymentMethod != null">
+                payment_method = #{paymentMethod},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus},
+            </if>
+            <if test="checkoutTime != null">
+                checkout_time = #{checkoutTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="cancelReason != null">
+                cancel_reason = #{cancelReason},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

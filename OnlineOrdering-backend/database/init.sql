@@ -180,3 +180,92 @@ INSERT INTO points_record (customer_id, type, points, order_id, remark, create_t
 (3, 1, 150, 1004, '订单消费获得', '2026-04-11 16:30:00'),
 (5, 1, 200, 1005, '订单消费获得', '2026-04-13 10:25:00'),
 (5, 3, 500, NULL, '会员充值赠送', '2026-04-10 11:30:00');
+
+-- 订单表
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '订单ID',
+    order_number VARCHAR(50) NOT NULL UNIQUE COMMENT '订单号',
+    customer_id BIGINT NOT NULL COMMENT '顾客ID',
+    table_id BIGINT NOT NULL COMMENT '餐台ID',
+    checkout_time DATETIME COMMENT '结账时间',
+    total_amount DECIMAL(10,2) NOT NULL COMMENT '订单总金额',
+    actual_amount DECIMAL(10,2) COMMENT '实际支付金额',
+    discount_amount DECIMAL(10,2) DEFAULT 0.00 COMMENT '优惠金额',
+    points_deduction DECIMAL(10,2) DEFAULT 0.00 COMMENT '积分抵扣金额',
+    points_used INT DEFAULT 0 COMMENT '使用的积分数',
+    points_earned INT DEFAULT 0 COMMENT '获得的积分数',
+    payment_method TINYINT COMMENT '支付方式：1-在线支付，2-线下支付',
+    order_status TINYINT DEFAULT 1 COMMENT '订单状态：1-待支付，2-已完成，3-已取消',
+    remark VARCHAR(500) COMMENT '备注',
+    cancel_reason VARCHAR(200) COMMENT '取消原因',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_order_number (order_number),
+    INDEX idx_customer_id (customer_id),
+    INDEX idx_table_id (table_id),
+    INDEX idx_order_status (order_status),
+    INDEX idx_create_time (create_time),
+    FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE RESTRICT,
+    FOREIGN KEY (table_id) REFERENCES dining_table(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单表';
+
+-- 订单明细表
+CREATE TABLE IF NOT EXISTS order_detail (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '明细ID',
+    order_id BIGINT NOT NULL COMMENT '订单ID',
+    dish_id BIGINT COMMENT '菜品ID',
+    setmeal_id BIGINT COMMENT '套餐ID',
+    name VARCHAR(100) NOT NULL COMMENT '菜品/套餐名称',
+    image VARCHAR(255) COMMENT '图片URL',
+    quantity INT NOT NULL DEFAULT 1 COMMENT '数量',
+    price DECIMAL(10,2) NOT NULL COMMENT '单价',
+    amount DECIMAL(10,2) NOT NULL COMMENT '小计金额',
+    flavor TEXT COMMENT '口味信息（JSON格式）',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    INDEX idx_order_id (order_id),
+    INDEX idx_dish_id (dish_id),
+    INDEX idx_setmeal_id (setmeal_id),
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (dish_id) REFERENCES dish(id) ON DELETE SET NULL,
+    FOREIGN KEY (setmeal_id) REFERENCES setmeal(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单明细表';
+
+-- 插入示例订单数据
+INSERT INTO orders (order_number, customer_id, table_id, checkout_time, total_amount, actual_amount, discount_amount, points_deduction, points_used, points_earned, payment_method, order_status, remark, create_time, update_time) VALUES 
+('20260410152000123456', 1, 1, '2026-04-10 16:30:00', 120.00, 100.00, 0.00, 20.00, 2000, 100, 1, 2, '少放辣椒', '2026-04-10 15:20:00', '2026-04-10 16:30:00'),
+('20260409123000234567', 1, 2, '2026-04-09 13:45:00', 180.00, 130.00, 0.00, 50.00, 5000, 0, 1, 2, '', '2026-04-09 12:30:00', '2026-04-09 13:45:00'),
+('20260405184500345678', 2, 3, '2026-04-05 20:00:00', 80.00, 80.00, 0.00, 0.00, 0, 80, 2, 2, '', '2026-04-05 18:45:00', '2026-04-05 20:00:00'),
+('20260411163000456789', 3, 1, '2026-04-11 17:45:00', 250.00, 250.00, 0.00, 0.00, 0, 150, 1, 2, '不要香菜', '2026-04-11 16:30:00', '2026-04-11 17:45:00'),
+('20260413102500567890', 4, 4, '2026-04-13 11:30:00', 200.00, 200.00, 0.00, 0.00, 0, 200, 2, 2, '', '2026-04-13 10:25:00', '2026-04-13 11:30:00'),
+('20260416093000678901', 2, 2, NULL, 150.00, NULL, 0.00, 0.00, 0, 0, NULL, 1, '', '2026-04-16 09:30:00', '2026-04-16 09:35:00'),
+('20260416100000789012', 4, 5, NULL, 220.00, NULL, 0.00, 0.00, 0, 0, NULL, 1, '多加点肉', '2026-04-16 10:00:00', '2026-04-16 10:05:00'),
+('20260416103000890123', 3, 3, NULL, 68.00, NULL, 0.00, 0.00, 0, 0, NULL, 1, '', '2026-04-16 10:30:00', '2026-04-16 10:30:00');
+
+-- 插入示例订单明细数据
+INSERT INTO order_detail (order_id, dish_id, setmeal_id, name, image, quantity, price, amount, flavor) VALUES 
+-- 订单1的明细
+(1, 1, NULL, '测试菜品', 'https://via.placeholder.com/100', 2, 58.00, 116.00, '{"甜味":"少糖","忌口":"不要葱"}'),
+(1, 2, NULL, '平菇豆腐汤', 'https://via.placeholder.com/100', 1, 6.00, 6.00, '{"辣度":"不辣"}'),
+-- 订单2的明细
+(2, 4, NULL, '鲍鱼2斤', 'https://via.placeholder.com/100', 2, 72.00, 144.00, NULL),
+(2, 3, NULL, '肉茄子', 'https://via.placeholder.com/100', 3, 4.00, 12.00, NULL),
+(2, 2, NULL, '平菇豆腐汤', 'https://via.placeholder.com/100', 4, 6.00, 24.00, NULL),
+-- 订单3的明细
+(3, 1, NULL, '测试菜品', 'https://via.placeholder.com/100', 1, 58.00, 58.00, '{"甜味":"半糖"}'),
+(3, 3, NULL, '肉茄子', 'https://via.placeholder.com/100', 2, 4.00, 8.00, NULL),
+(3, 2, NULL, '平菇豆腐汤', 'https://via.placeholder.com/100', 2, 6.00, 12.00, NULL),
+-- 订单4的明细
+(4, NULL, 1, '人气套餐A计划', 'https://via.placeholder.com/100', 2, 45.00, 90.00, NULL),
+(4, 4, NULL, '鲍鱼2斤', 'https://via.placeholder.com/100', 2, 72.00, 144.00, NULL),
+(4, 3, NULL, '肉茄子', 'https://via.placeholder.com/100', 4, 4.00, 16.00, NULL),
+-- 订单5的明细
+(5, 1, NULL, '测试菜品', 'https://via.placeholder.com/100', 3, 58.00, 174.00, '{"甜味":"全糖","忌口":"不要蒜"}'),
+(5, 2, NULL, '平菇豆腐汤', 'https://via.placeholder.com/100', 4, 6.00, 24.00, '{"辣度":"微辣"}'),
+-- 订单6的明细
+(6, 4, NULL, '鲍鱼2斤', 'https://via.placeholder.com/100', 2, 72.00, 144.00, NULL),
+(6, 2, NULL, '平菇豆腐汤', 'https://via.placeholder.com/100', 1, 6.00, 6.00, NULL),
+-- 订单7的明细
+(7, 1, NULL, '测试菜品', 'https://via.placeholder.com/100', 3, 58.00, 174.00, '{"甜味":"多糖"}'),
+(7, NULL, 1, '人气套餐A计划', 'https://via.placeholder.com/100', 1, 45.00, 45.00, NULL),
+-- 订单8的明细
+(8, 4, NULL, '鲍鱼2斤', 'https://via.placeholder.com/100', 1, 72.00, 72.00, NULL);

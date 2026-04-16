@@ -38,32 +38,32 @@
         :data="customerList" 
         style="width: 100%; margin-top: 20px;"
       >
-        <el-table-column label="头像" width="80" align="center">
+        <el-table-column label="头像" min-width="100" align="center">
           <template #default="{ row }">
             <el-avatar :src="row.avatar" :size="50">
               <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
             </el-avatar>
           </template>
         </el-table-column>
-        <el-table-column prop="nickname" label="昵称" width="120" />
-        <el-table-column prop="gender" label="性别" width="80" align="center">
+        <el-table-column prop="nickname" label="昵称" min-width="120" />
+        <el-table-column prop="gender" label="性别" min-width="80" align="center">
           <template #default="{ row }">
             {{ getGenderText(row.gender) }}
           </template>
         </el-table-column>
-        <el-table-column prop="isMember" label="会员" width="80" align="center">
+        <el-table-column prop="isMember" label="会员" min-width="80" align="center">
           <template #default="{ row }">
             <el-tag :type="row.isMember ? 'success' : 'info'" size="small">
               {{ row.isMember ? '是' : '否' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="points" label="当前积分" width="100" align="center">
+        <el-table-column prop="points" label="当前积分" min-width="100" align="center">
           <template #default="{ row }">
             <span style="color: #f56c6c; font-weight: bold;">{{ row.points || 0 }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100" align="center">
+        <el-table-column prop="status" label="状态" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">
               {{ getStatusText(row.status) }}

@@ -21,6 +21,7 @@
           <el-option label="套餐分类" value="2" />
         </el-select>
         <el-button type="primary" @click="handleSearch">查询</el-button>
+        <el-button @click="handleReset">重置</el-button>
         
         <div style="flex: 1"></div>
         
@@ -37,13 +38,13 @@
         v-loading="loading"
         style="width: 100%; margin-top: 20px;"
       >
-        <el-table-column prop="name" label="分类名称" min-width="120" />
+        <el-table-column prop="name" label="分类名称" min-width="150" />
         <el-table-column prop="type" label="分类类型" min-width="120">
           <template #default="{ row }">
             {{ row.type === 1 ? '菜品分类' : '套餐分类' }}
           </template>
         </el-table-column>
-        <el-table-column prop="sort" label="排序" min-width="80" align="center" />
+        <el-table-column prop="sort" label="排序" min-width="100" align="center" />
         <el-table-column prop="status" label="状态" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="row.status === 1 ? 'success' : 'info'">
@@ -56,7 +57,7 @@
             {{ formatDateTime(row.updateTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="90" align="center" fixed="right">
+        <el-table-column label="操作" width="220" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">修改</el-button>
             <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
@@ -171,6 +172,14 @@ const loadCategoryList = async () => {
 
 // 搜索
 const handleSearch = () => {
+  currentPage.value = 1
+  loadCategoryList()
+}
+
+// 重置
+const handleReset = () => {
+  searchName.value = ''
+  searchType.value = ''
   currentPage.value = 1
   loadCategoryList()
 }

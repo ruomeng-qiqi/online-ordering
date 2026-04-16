@@ -35,6 +35,7 @@
           <el-option label="停售" :value="0" />
         </el-select>
         <el-button type="primary" @click="handleSearch">查询</el-button>
+        <el-button @click="handleReset">重置</el-button>
         
         <div style="flex: 1"></div>
         
@@ -49,7 +50,7 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="菜品名称" min-width="120" />
+        <el-table-column prop="name" label="菜品名称" min-width="150" />
         <el-table-column label="图片" min-width="100">
           <template #default="{ row }">
             <el-image 
@@ -77,7 +78,7 @@
             {{ formatDateTime(row.updateTime) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="110" align="center" fixed="right">
+        <el-table-column label="操作" width="220" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">修改</el-button>
             <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
@@ -187,6 +188,15 @@ const loadDishList = async () => {
 
 // 搜索
 const handleSearch = () => {
+  currentPage.value = 1
+  loadDishList()
+}
+
+// 重置
+const handleReset = () => {
+  searchName.value = ''
+  searchCategoryId.value = ''
+  searchStatus.value = ''
   currentPage.value = 1
   loadDishList()
 }

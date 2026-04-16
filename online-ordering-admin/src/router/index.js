@@ -62,6 +62,18 @@ const routes = [
         meta: { title: '订单管理' }
       },
       {
+        path: 'order/detail/:id',
+        name: 'OrderDetail',
+        component: () => import('@/views/Order/Detail.vue'),
+        meta: { title: '订单详情' }
+      },
+      {
+        path: 'order/edit/:id',
+        name: 'OrderEdit',
+        component: () => import('@/views/Order/Edit.vue'),
+        meta: { title: '编辑订单' }
+      },
+      {
         path: 'customer',
         name: 'Customer',
         component: () => import('@/views/Customer/Index.vue'),

@@ -28,6 +28,7 @@
           <el-option label="占用" :value="1" />
         </el-select>
         <el-button type="primary" @click="handleSearch">查询</el-button>
+        <el-button @click="handleReset">重置</el-button>
         
         <div style="flex: 1"></div>
         
@@ -41,10 +42,10 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="tableNumber" label="餐台号" min-width="100" />
-        <el-table-column prop="tableName" label="餐台名称" min-width="120" />
-        <el-table-column prop="seats" label="座位数" min-width="80" align="center" />
-        <el-table-column prop="sort" label="排序" min-width="80" align="center" />
+        <el-table-column prop="tableNumber" label="餐台号" min-width="120" />
+        <el-table-column prop="tableName" label="餐台名称" min-width="150" />
+        <el-table-column prop="seats" label="座位数" min-width="100" align="center" />
+        <el-table-column prop="sort" label="排序" min-width="100" align="center" />
         <el-table-column prop="status" label="状态" min-width="100" align="center">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">
@@ -52,7 +53,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="二维码" min-width="80" align="center">
+        <el-table-column label="二维码" min-width="100" align="center">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleShowQrCode(row)">
               查看
@@ -60,7 +61,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="updateTime" label="操作时间" min-width="160" align="center" />
-        <el-table-column label="操作" min-width="80" align="center" fixed="right">
+        <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleEdit(row)">修改</el-button>
             <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
@@ -201,6 +202,14 @@ const getStatusType = (status) => {
 
 // 搜索
 const handleSearch = () => {
+  loadTableList()
+}
+
+// 重置
+const handleReset = () => {
+  searchTableNumber.value = ''
+  searchTableName.value = ''
+  searchStatus.value = ''
   loadTableList()
 }
 
