@@ -94,8 +94,10 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false" :disabled="submitLoading">取消</el-button>
+        <el-button type="primary" @click="handleSubmit" :loading="submitLoading" style="min-width: 60px;">
+          {{ submitLoading ? '' : '确定' }}
+        </el-button>
       </template>
     </el-dialog>
 
@@ -138,6 +140,7 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('添加餐台')
 const qrCodeDialogVisible = ref(false)
 const currentTable = ref({})
+const submitLoading = ref(false)
 const formData = ref({
   id: null,
   tableNumber: '',
@@ -340,6 +343,8 @@ const handleSubmit = async () => {
     return
   }
 
+  submitLoading.value = true
+  
   try {
     const data = {
       id: formData.value.id,
@@ -368,6 +373,8 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('提交失败:', error)
+  } finally {
+    submitLoading.value = false
   }
 }
 </script>

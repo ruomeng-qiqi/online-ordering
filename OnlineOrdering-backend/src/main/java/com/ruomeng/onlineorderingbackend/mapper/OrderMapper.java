@@ -24,6 +24,12 @@ public interface OrderMapper {
     Order selectById(Long id);
 
     /**
+     * 根据顾客ID统计订单数量
+     */
+    @Select("SELECT COUNT(*) FROM orders WHERE customer_id = #{customerId}")
+    int countByCustomerId(Long customerId);
+
+    /**
      * 更新订单
      */
     int update(Order order);

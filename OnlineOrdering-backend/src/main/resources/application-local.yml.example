@@ -1,0 +1,23 @@
+# 本地配置文件示例
+
+# 微信小程序配置
+wechat:
+  miniapp:
+    # 小程序 AppID（请替换为你的小程序 AppID）
+    appid: your_miniapp_appid
+    # 小程序 AppSecret（请替换为你的小程序 AppSecret）
+    secret: your_miniapp_secret
+    # 小程序页面路径（扫码后跳转的页面）
+    page-path: pages/index/index
+
+# 阿里云 OSS 配置
+aliyun:
+  oss:
+    # OSS 访问域名（Endpoint）
+    endpoint: oss-cn-beijing.aliyuncs.com
+    # AccessKey ID（请替换为你的 AccessKey ID）
+    access-key-id: your_access_key_id
+    # AccessKey Secret（请替换为你的 AccessKey Secret）
+    access-key-secret: your_access_key_secret
+    # Bucket 名称（请替换为你的 Bucket 名称）
+    bucket-name: your_bucket_name

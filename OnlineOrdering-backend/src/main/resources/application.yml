@@ -10,6 +10,9 @@ spring:
     url: jdbc:mysql://localhost:3306/online_ordering
     username: root
     password: 123456
+  # 引入本地配置文件（包含敏感信息，不提交到 Git）
+  profiles:
+    include: local
 
 # MyBatis 配置
 mybatis:
@@ -39,18 +42,6 @@ jwt:
   secret: ruomeng-online-ordering-backend-jwt
   # 过期时间（单位：秒，默认 2 小时）
   expiration: 7200
-
-# 微信小程序配置
-wechat:
-  miniapp:
-    # 小程序 AppID（请替换为你的小程序 AppID）
-    appid: wx66e9d5ffac6de241
-    # 小程序 AppSecret（请替换为你的小程序 AppSecret）
-    secret: fd27a20710a06dace4d4346eaa14847f
-    # 小程序码保存路径（保存到项目外部目录，持久化存储）
-    qrcode-path: D:/upload/qrcode/
-    # 小程序页面路径（扫码后跳转的页面，暂时使用首页）
-    page-path: pages/index/index
 
 # 日志配置
 logging:

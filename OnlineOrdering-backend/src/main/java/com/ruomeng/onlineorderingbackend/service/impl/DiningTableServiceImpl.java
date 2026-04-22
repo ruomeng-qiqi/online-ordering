@@ -48,19 +48,24 @@ public class DiningTableServiceImpl implements DiningTableService {
         diningTable.setCreateTime(LocalDateTime.now());
         diningTable.setUpdateTime(LocalDateTime.now());
         
-        // 生成小程序码（使用餐台号）
-        try {
-            String qrcodeUrl = WxQrcodeUtil.generateTableQrcode(diningTable.getTableNumber());
-            diningTable.setQrCode(qrcodeUrl);
-        } catch (Exception e) {
-            log.error("生成小程序码失败，使用默认二维码", e);
-            diningTable.setQrCode("https://via.placeholder.com/200?text=" + diningTableDTO.getTableNumber());
-        }
+        // 先使用占位图，插入数据库
+        diningTable.setQrCode("https://via.placeholder.com/200?text=" + diningTableDTO.getTableNumber());
         
         // 插入数据库
         int result = diningTableMapper.insert(diningTable);
         if (result <= 0) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "添加餐台失败");
+        }
+        
+        // 数据库插入成功后，生成小程序码并更新
+        try {
+            String qrcodeUrl = WxQrcodeUtil.generateTableQrcode(diningTable.getTableNumber());
+            diningTable.setQrCode(qrcodeUrl);
+            diningTable.setUpdateTime(LocalDateTime.now());
+            diningTableMapper.update(diningTable);
+        } catch (Exception e) {
+            log.error("生成小程序码失败，使用占位图", e);
+            // 小程序码生成失败不影响餐台添加，继续使用占位图
         }
     }
 
@@ -98,15 +103,9 @@ public class DiningTableServiceImpl implements DiningTableService {
         
         // 如果餐台号变更，重新生成小程序码
         if (tableNumberChanged) {
-            // 先删除旧的小程序码文件
-            String oldQrCode = diningTable.getQrCode();
-            
             try {
                 String qrcodeUrl = WxQrcodeUtil.generateTableQrcode(diningTable.getTableNumber());
                 diningTable.setQrCode(qrcodeUrl);
-                
-                // 生成新二维码成功后，删除旧文件
-                WxQrcodeUtil.deleteQrcodeFile(oldQrCode);
             } catch (Exception e) {
                 log.error("重新生成小程序码失败，保留原二维码", e);
             }
@@ -119,7 +118,7 @@ public class DiningTableServiceImpl implements DiningTableService {
     }
 
     /**
-     * 删除餐台
+     * 删除餐台（软删除）
      */
     @Override
     public void delete(Long id) {
@@ -134,18 +133,15 @@ public class DiningTableServiceImpl implements DiningTableService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "只能删除空闲状态的餐台");
         }
 
-        // 删除餐台
+        // 软删除餐台
         int result = diningTableMapper.deleteById(id);
         if (result <= 0) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除餐台失败");
         }
-        
-        // 删除小程序码文件
-        WxQrcodeUtil.deleteQrcodeFile(diningTable.getQrCode());
     }
 
     /**
-     * 批量删除餐台
+     * 批量删除餐台（软删除）
      */
     @Override
     public void deleteBatch(List<Long> ids) {
@@ -162,24 +158,10 @@ public class DiningTableServiceImpl implements DiningTableService {
             }
         }
 
-        // 先获取所有餐台的二维码URL，用于删除文件
-        List<String> qrcodeUrls = new java.util.ArrayList<>();
-        for (Long id : ids) {
-            DiningTable diningTable = diningTableMapper.selectById(id);
-            if (diningTable != null && diningTable.getQrCode() != null) {
-                qrcodeUrls.add(diningTable.getQrCode());
-            }
-        }
-
-        // 批量删除餐台
+        // 批量软删除餐台
         int result = diningTableMapper.deleteBatchByIds(ids);
         if (result <= 0) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "批量删除餐台失败");
-        }
-        
-        // 删除所有小程序码文件
-        for (String qrcodeUrl : qrcodeUrls) {
-            WxQrcodeUtil.deleteQrcodeFile(qrcodeUrl);
         }
     }
 

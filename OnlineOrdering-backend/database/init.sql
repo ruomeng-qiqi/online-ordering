@@ -110,16 +110,18 @@ INSERT INTO setmeal (name, category_id, price, image, description, status) VALUE
 -- 餐台表
 CREATE TABLE IF NOT EXISTS dining_table (
     id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '餐台ID',
-    table_number VARCHAR(20) NOT NULL UNIQUE COMMENT '餐台号',
+    table_number VARCHAR(20) NOT NULL COMMENT '餐台号',
     table_name VARCHAR(50) NOT NULL COMMENT '餐台名称',
     seats INT NOT NULL COMMENT '座位数',
     status INT DEFAULT 0 COMMENT '状态：0-空闲，1-占用',
     qr_code VARCHAR(255) COMMENT '二维码URL',
     sort INT DEFAULT 0 COMMENT '排序',
+    deleted TINYINT DEFAULT 0 COMMENT '是否删除：0-正常，1-已删除',
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    INDEX idx_table_number (table_number),
-    INDEX idx_status (status)
+    UNIQUE INDEX uk_table_number_deleted (table_number, deleted),
+    INDEX idx_status (status),
+    INDEX idx_deleted (deleted)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='餐台表';
 
 -- 插入示例餐台数据

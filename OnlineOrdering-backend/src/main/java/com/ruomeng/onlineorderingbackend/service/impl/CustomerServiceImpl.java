@@ -6,6 +6,7 @@ import com.ruomeng.onlineorderingbackend.common.PageResult;
 import com.ruomeng.onlineorderingbackend.exception.BusinessException;
 import com.ruomeng.onlineorderingbackend.exception.ErrorCode;
 import com.ruomeng.onlineorderingbackend.mapper.CustomerMapper;
+import com.ruomeng.onlineorderingbackend.mapper.OrderMapper;
 import com.ruomeng.onlineorderingbackend.mapper.PointsRecordMapper;
 import com.ruomeng.onlineorderingbackend.model.dto.CustomerPageQueryDTO;
 import com.ruomeng.onlineorderingbackend.model.dto.PointsAdjustDTO;
@@ -36,6 +37,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private PointsRecordMapper pointsRecordMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     /**
      * 分页查询顾客
@@ -114,6 +118,13 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerMapper.selectById(id);
         if (customer == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "顾客不存在");
+        }
+
+        // 检查顾客是否有订单
+        int orderCount = orderMapper.countByCustomerId(id);
+        if (orderCount > 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, 
+                "该顾客有 " + orderCount + " 条历史订单，无法删除。建议使用禁用功能");
         }
 
         // 删除顾客（积分记录会通过外键级联删除）

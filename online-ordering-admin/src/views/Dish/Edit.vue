@@ -119,6 +119,7 @@ import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { getDishById, addDish, updateDish } from '@/api/dish'
 import { getCategoryPage } from '@/api/category'
+import { uploadFile } from '@/api/common'
 
 const route = useRoute()
 const router = useRouter()
@@ -248,9 +249,23 @@ const beforeUpload = (file) => {
 }
 
 // 文件选择变化
-const handleFileChange = (file) => {
-  if (beforeUpload(file.raw)) {
-    formData.value.image = URL.createObjectURL(file.raw)
+const handleFileChange = async (file) => {
+  if (!beforeUpload(file.raw)) {
+    return
+  }
+  
+  try {
+    // 上传文件到OSS
+    const response = await uploadFile(file.raw, 'dish')
+    if (response.code === 200) {
+      formData.value.image = response.data
+      ElMessage.success('上传成功')
+    } else {
+      ElMessage.error(response.msg || '上传失败')
+    }
+  } catch (error) {
+    console.error('上传失败:', error)
+    ElMessage.error('上传失败')
   }
 }
 

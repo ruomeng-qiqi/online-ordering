@@ -1,4 +1,4 @@
-package com.ruomeng.onlineorderingbackend.config;
+package com.ruomeng.onlineorderingbackend.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,9 +17,6 @@ public class WxMaProperties {
     
     /** 小程序 AppSecret */
     private String secret;
-    
-    /** 小程序码保存路径 */
-    private String qrcodePath;
     
     /** 小程序页面路径 */
     private String pagePath;

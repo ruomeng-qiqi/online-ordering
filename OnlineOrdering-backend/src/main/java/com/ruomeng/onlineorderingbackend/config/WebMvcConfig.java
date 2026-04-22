@@ -1,6 +1,7 @@
 package com.ruomeng.onlineorderingbackend.config;
 
 import com.ruomeng.onlineorderingbackend.interceptor.JwtInterceptor;
+import com.ruomeng.onlineorderingbackend.properties.WxMaProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

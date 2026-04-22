@@ -24,26 +24,25 @@ public interface DiningTableMapper {
     int update(DiningTable diningTable);
 
     /**
-     * 根据ID删除餐台
+     * 根据ID删除餐台（软删除）
      */
-    @Delete("DELETE FROM dining_table WHERE id = #{id}")
     int deleteById(Long id);
 
     /**
-     * 批量删除餐台
+     * 批量删除餐台（软删除）
      */
     int deleteBatchByIds(@Param("ids") List<Long> ids);
 
     /**
-     * 根据ID查询餐台
+     * 根据ID查询餐台（只查询未删除的）
      */
-    @Select("SELECT * FROM dining_table WHERE id = #{id}")
+    @Select("SELECT * FROM dining_table WHERE id = #{id} AND deleted = 0")
     DiningTable selectById(Long id);
 
     /**
-     * 根据餐台号查询餐台
+     * 根据餐台号查询餐台（只查询未删除的）
      */
-    @Select("SELECT * FROM dining_table WHERE table_number = #{tableNumber}")
+    @Select("SELECT * FROM dining_table WHERE table_number = #{tableNumber} AND deleted = 0")
     DiningTable selectByTableNumber(String tableNumber);
 
     /**

@@ -3,16 +3,16 @@ package com.ruomeng.onlineorderingbackend.utils;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaCodeLineColor;
 import cn.binarywang.wx.miniapp.constant.WxMaConstants;
-import com.ruomeng.onlineorderingbackend.config.WxMaProperties;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
+import com.ruomeng.onlineorderingbackend.properties.WxMaProperties;
 import com.ruomeng.onlineorderingbackend.exception.BusinessException;
 import com.ruomeng.onlineorderingbackend.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.Date;
 
 /**
  * 微信小程序码工具类
@@ -24,6 +24,8 @@ public class WxQrcodeUtil {
     private static WxMaService wxMaService;
     
     private static WxMaProperties wxMaProperties;
+    
+    private static AliOssUtil aliOssUtil;
 
     @Autowired
     public void setWxMaService(WxMaService wxMaService) {
@@ -33,6 +35,11 @@ public class WxQrcodeUtil {
     @Autowired
     public void setWxMaProperties(WxMaProperties wxMaProperties) {
         WxQrcodeUtil.wxMaProperties = wxMaProperties;
+    }
+    
+    @Autowired
+    public void setAliOssUtil(AliOssUtil aliOssUtil) {
+        WxQrcodeUtil.aliOssUtil = aliOssUtil;
     }
 
     /**
@@ -58,73 +65,21 @@ public class WxQrcodeUtil {
                 false  // 是否自动配置线条颜色
             );
             
-            // 保存小程序码到本地
-            String fileName = "table_" + tableNumber + "_" + System.currentTimeMillis() + ".png";
-            String savePath = saveQrcodeToLocal(qrcodeBytes, fileName);
+            // 生成文件名：qrcode/日期_随机字符串.png
+            String uuid = RandomUtil.randomString(16);
+            String fileName = String.format("qrcode/%s_%s.png", 
+                    DateUtil.formatDate(new Date()), 
+                    uuid);
             
-            log.info("生成餐台小程序码成功，餐台号：{}，保存路径：{}", tableNumber, savePath);
-            return savePath;
+            // 上传到阿里云 OSS
+            String url = aliOssUtil.upload(qrcodeBytes, fileName);
+            
+            log.info("生成餐台小程序码成功，餐台号：{}，URL：{}", tableNumber, url);
+            return url;
             
         } catch (Exception e) {
             log.error("生成餐台小程序码失败，餐台号：{}", tableNumber, e);
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "生成小程序码失败：" + e.getMessage());
-        }
-    }
-
-    /**
-     * 保存小程序码到本地
-     */
-    private static String saveQrcodeToLocal(byte[] qrcodeBytes, String fileName) throws IOException {
-        // 获取保存路径
-        String qrcodePath = wxMaProperties.getQrcodePath();
-        
-        // 创建目录
-        File directory = new File(qrcodePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        
-        // 保存文件
-        String filePath = qrcodePath + fileName;
-        File file = new File(filePath);
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(qrcodeBytes);
-        }
-        
-        // 返回访问URL（这里返回相对路径，实际使用时需要配置静态资源访问）
-        return "/qrcode/" + fileName;
-    }
-
-    /**
-     * 删除小程序码文件
-     */
-    public static void deleteQrcodeFile(String qrcodeUrl) {
-        if (qrcodeUrl == null || qrcodeUrl.isEmpty()) {
-            return;
-        }
-        
-        // 如果是占位图URL，不需要删除
-        if (qrcodeUrl.startsWith("https://via.placeholder.com") || qrcodeUrl.startsWith("http://")) {
-            return;
-        }
-        
-        try {
-            // 从URL中提取文件名
-            String fileName = qrcodeUrl.substring(qrcodeUrl.lastIndexOf("/") + 1);
-            String qrcodePath = wxMaProperties.getQrcodePath();
-            String filePath = qrcodePath + fileName;
-            
-            File file = new File(filePath);
-            if (file.exists()) {
-                boolean deleted = file.delete();
-                if (deleted) {
-                    log.info("删除小程序码文件成功：{}", filePath);
-                } else {
-                    log.warn("删除小程序码文件失败：{}", filePath);
-                }
-            }
-        } catch (Exception e) {
-            log.error("删除小程序码文件异常：{}", qrcodeUrl, e);
         }
     }
 }
