@@ -1,0 +1,33 @@
+<!--pages/dish-detail/dish-detail.wxml-->
+<view class="page">
+  <!-- 菜品图片 -->
+  <view class="dish-image-wrapper">
+    <image class="dish-image" src="{{dish.image}}" mode="aspectFill"></image>
+  </view>
+
+  <!-- 菜品信息 -->
+  <view class="dish-info-section">
+    <view class="info-left">
+      <text class="dish-name">{{dish.name}}</text>
+      <text class="dish-price">¥{{dish.price}}</text>
+    </view>
+    <view class="info-right">
+      <!-- 如果当前口味已加入购物车，显示加减按钮 -->
+      <view class="quantity-control" wx:if="{{currentQuantity > 0}}">
+        <view class="btn-minus" bindtap="decrease">-</view>
+        <text class="quantity">{{currentQuantity}}</text>
+        <view class="btn-plus" bindtap="increase">+</view>
+      </view>
+      <!-- 否则显示加入购物车按钮 -->
+      <view class="add-cart-btn" wx:else bindtap="addToCart">
+        <text>加入购物车</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品详情 -->
+  <view class="detail-section">
+    <view class="section-title">商品详情</view>
+    <text class="detail-text">{{dish.description}}</text>
+  </view>
+</view>

@@ -1,0 +1,31 @@
+<!--pages/payment-success/payment-success.wxml-->
+<view class="page">
+  <view class="success-container">
+    <view class="success-icon">✓</view>
+    <text class="success-title">支付成功</text>
+    
+    <view class="success-info">
+      <view class="info-item">
+        <text class="info-label">实付金额</text>
+        <text class="info-value amount">¥{{amount}}</text>
+      </view>
+      <view class="info-item" wx:if="{{points > 0}}">
+        <text class="info-label">获得积分</text>
+        <text class="info-value points">+{{points}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">订单号</text>
+        <text class="info-value">{{orderNumber}}</text>
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <view class="action-btn secondary" bindtap="viewOrder">
+        <text>查看订单</text>
+      </view>
+      <view class="action-btn primary" bindtap="backToHome">
+        <text>返回首页</text>
+      </view>
+    </view>
+  </view>
+</view>

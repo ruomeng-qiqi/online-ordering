@@ -1,0 +1,59 @@
+<!--pages/checkout/checkout.wxml-->
+<view class="page">
+  <!-- 订单信息 -->
+  <view class="section">
+    <view class="section-title">订单信息</view>
+    <view class="info-row">
+      <text class="info-label">桌号</text>
+      <text class="info-value">{{tableNumber}}</text>
+    </view>
+  </view>
+
+  <!-- 菜品明细 -->
+  <view class="section">
+    <view class="section-title">菜品明细</view>
+    <view class="dish-list">
+      <view class="dish-item" wx:for="{{cartItems}}" wx:key="flavorKey">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="dish-info">
+          <text class="dish-name">{{item.name}}</text>
+          <text class="dish-flavor" wx:if="{{item.flavorText}}">{{item.flavorText}}</text>
+        </view>
+        <view class="dish-right">
+          <text class="dish-price">¥{{item.price}}</text>
+          <text class="dish-quantity">×{{item.quantity}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="total-row">
+      <text class="total-label">订单总额</text>
+      <text class="total-amount">¥{{totalAmount}}</text>
+    </view>
+  </view>
+
+  <!-- 订单备注 -->
+  <view class="section">
+    <view class="section-title">订单备注（选填）</view>
+    <view class="remark-wrapper">
+      <textarea 
+        class="remark-input" 
+        placeholder="如：不要香菜、少放辣、打包等" 
+        maxlength="30"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+      ></textarea>
+      <text class="remark-count">{{remarkLength}}/30</text>
+    </view>
+  </view>
+
+  <!-- 底部提交按钮 -->
+  <view class="footer" wx:if="{{showFooter}}">
+    <view class="footer-left">
+      <text class="total-label">合计：</text>
+      <text class="total-price">¥{{totalAmount}}</text>
+    </view>
+    <view class="submit-btn" bindtap="submitOrder">
+      <text>提交订单</text>
+    </view>
+  </view>
+</view>

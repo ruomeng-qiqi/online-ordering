@@ -1,0 +1,256 @@
+/* pages/payment/payment.wxss */
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 内容区域 */
+.content {
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 区块样式 */
+.section {
+  background-color: #fff;
+  margin: 20rpx 30rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.section:first-child {
+  margin-top: 20rpx;
+}
+
+.section:last-child {
+  margin-bottom: 140rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+/* 金额明细 */
+.amount-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.amount-row.total {
+  border-top: 1rpx solid #f0f0f0;
+  margin-top: 10rpx;
+  padding-top: 30rpx;
+}
+
+.amount-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.amount-row.total .amount-label {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.amount-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.amount-value.discount {
+  color: #67c23a;
+}
+
+.amount-row.total .amount-value {
+  font-size: 36rpx;
+  color: #ff6b35;
+}
+
+/* 积分抵扣 */
+.points-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-bottom: 30rpx;
+}
+
+.points-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.points-tip {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.points-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.points-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.points-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.points-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #666;
+}
+
+.points-input {
+  width: 150rpx;
+  height: 60rpx;
+  text-align: center;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.points-deduction {
+  text-align: right;
+}
+
+.deduction-text {
+  font-size: 28rpx;
+  color: #67c23a;
+  font-weight: bold;
+}
+
+/* 支付方式 */
+.payment-method {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.payment-method:last-child {
+  border-bottom: none;
+}
+
+.method-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.method-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+.method-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.method-desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.method-radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ddd;
+  position: relative;
+}
+
+.method-radio.checked {
+  border-color: #ff6b35;
+}
+
+.method-radio.checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background-color: #ff6b35;
+}
+
+/* 底部占位 */
+.bottom-placeholder {
+  height: 40rpx;
+}
+
+/* 底部支付按钮 */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.footer-left {
+  display: flex;
+  align-items: baseline;
+}
+
+.total-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-right: 8rpx;
+}
+
+.total-price {
+  font-size: 40rpx;
+  color: #ff6b35;
+  font-weight: bold;
+}
+
+.pay-btn {
+  width: 280rpx;
+  height: 80rpx;
+  background-color: #ff6b35;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: bold;
+}

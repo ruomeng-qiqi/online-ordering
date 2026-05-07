@@ -1,0 +1,74 @@
+<!--pages/payment/payment.wxml-->
+<view class="page">
+  <scroll-view scroll-y class="content">
+    <!-- 金额明细 -->
+    <view class="section">
+      <view class="section-title">金额明细</view>
+      <view class="amount-row">
+        <text class="amount-label">菜品总额</text>
+        <text class="amount-value">¥{{order.totalAmount}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{order.discountAmount > 0}}">
+        <text class="amount-label">优惠金额</text>
+        <text class="amount-value discount">-¥{{order.discountAmount}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{pointsDeduction > 0}}">
+        <text class="amount-label">积分抵扣</text>
+        <text class="amount-value discount">-¥{{pointsDeduction}} ({{pointsUsed}}积分)</text>
+      </view>
+      <view class="amount-row total">
+        <text class="amount-label">实付金额</text>
+        <text class="amount-value">¥{{actualAmount}}</text>
+      </view>
+    </view>
+
+    <!-- 积分抵扣 -->
+    <view class="section" wx:if="{{availablePoints > 0}}">
+      <view class="section-title">积分抵扣</view>
+      <view class="points-info">
+        <text class="points-text">可用积分：{{availablePoints}}</text>
+      </view>
+      <view class="points-control">
+        <text class="points-label">使用积分</text>
+        <view class="points-input-wrapper">
+          <view class="points-btn" bindtap="decreasePoints">-</view>
+          <input 
+            class="points-input" 
+            type="number" 
+            value="{{pointsUsed}}"
+            bindinput="onPointsInput"
+          />
+          <view class="points-btn" bindtap="increasePoints">+</view>
+        </view>
+      </view>
+      <view class="points-deduction">
+        <text class="deduction-text">可抵扣：¥{{pointsDeduction}}</text>
+      </view>
+    </view>
+
+    <!-- 支付方式 -->
+    <view class="section">
+      <view class="section-title">支付方式</view>
+      <view class="payment-method">
+        <view class="method-left">
+          <text class="method-name">💳 微信支付</text>
+        </view>
+        <view class="method-radio checked"></view>
+      </view>
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="bottom-placeholder"></view>
+  </scroll-view>
+
+  <!-- 底部支付按钮 -->
+  <view class="footer">
+    <view class="footer-left">
+      <text class="total-label">实付：</text>
+      <text class="total-price">¥{{actualAmount}}</text>
+    </view>
+    <view class="pay-btn" bindtap="confirmPay">
+      <text>确认支付</text>
+    </view>
+  </view>
+</view>

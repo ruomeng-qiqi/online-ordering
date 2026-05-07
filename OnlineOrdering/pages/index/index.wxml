@@ -1,0 +1,169 @@
+<!--index.wxml-->
+<view class="page">
+  <!-- 顶部店铺信息 -->
+  <view class="shop-header">
+    <image class="shop-image" src="{{shopInfo.image}}" mode="aspectFill"></image>
+    <view class="shop-info">
+      <view class="shop-name">{{shopInfo.name}}</view>
+      <view class="shop-desc">{{shopInfo.description}}</view>
+      <view class="shop-tags">
+        <view class="tag-item">
+          <text class="tag-icon">⏰</text>
+          <text class="tag-text">{{shopInfo.tag1}}</text>
+        </view>
+        <view class="tag-item">
+          <text class="tag-icon">🥗</text>
+          <text class="tag-text">{{shopInfo.tag2}}</text>
+        </view>
+        <view class="tag-item">
+          <text class="tag-icon">🧹</text>
+          <text class="tag-text">{{shopInfo.tag3}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="table-number">
+      <text class="table-text">桌号 {{tableNumber}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 主体内容区 -->
+  <view class="main-content">
+    <!-- 温馨提示 -->
+    <view class="notice">
+      <text class="notice-icon">📢</text>
+      <text class="notice-text">温馨提示：请按需点餐，珍惜粮食，避免浪费！</text>
+    </view>
+
+    <view class="content-wrapper">
+      <!-- 左侧分类 -->
+      <view class="category-sidebar">
+        <scroll-view scroll-y class="category-scroll">
+          <view class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+                wx:for="{{categories}}" wx:key="id"
+                bindtap="selectCategory" data-id="{{item.id}}">
+            <text class="category-name">{{item.name}}</text>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 右侧菜品列表 -->
+      <view class="dish-content">
+        <scroll-view scroll-y class="dish-scroll">
+          <!-- 当前分类的菜品 -->
+          <view class="section">
+            <view class="dish-item" wx:for="{{dishes}}" wx:key="id" wx:if="{{item.categoryId === currentCategory && item.status === 1}}">
+              <image class="dish-image" src="{{item.image}}" mode="aspectFill" bindtap="goToDishDetail" data-id="{{item.id}}"></image>
+              <view class="dish-info" bindtap="goToDishDetail" data-id="{{item.id}}">
+                <text class="dish-name">{{item.name}}</text>
+                <text class="dish-desc">{{item.description}}</text>
+                <view class="dish-footer">
+                  <text class="dish-price">¥{{item.price}}</text>
+                  <view class="dish-action" catchtap="stopPropagation">
+                    <view class="btn-minus" wx:if="{{item.count > 0}}" 
+                          bindtap="decreaseDish" data-id="{{item.id}}">-</view>
+                    <text class="count" wx:if="{{item.count > 0}}">{{item.count}}</text>
+                    <view class="add-btn" bindtap="addDish" data-id="{{item.id}}">
+                      <text class="add-icon">+</text>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部购物车 -->
+  <view class="cart-bar" wx:if="{{cartCount > 0}}">
+    <view class="cart-left" bindtap="showCart">
+      <view class="cart-icon-wrapper">
+        <view class="cart-icon">🛒</view>
+        <view class="cart-badge">{{cartCount}}</view>
+      </view>
+      <view class="cart-info">
+        <text class="cart-price">¥{{cartTotal}}</text>
+      </view>
+    </view>
+    <view class="cart-btn" bindtap="checkout">
+      <text>去结算</text>
+    </view>
+  </view>
+
+  <!-- 口味选择弹窗 -->
+  <view class="flavor-mask" wx:if="{{showFlavorDialog}}" bindtap="closeFlavorDialog">
+    <view class="flavor-wrapper" catchtap="stopPropagation">
+      <view class="flavor-dialog">
+        <view class="flavor-header">
+          <text class="flavor-title">{{currentDish.name}}</text>
+        </view>
+        <view class="flavor-content">
+          <view class="flavor-section" wx:for="{{currentDish.flavors}}" wx:key="name">
+            <view class="flavor-section-title">{{item.name}}</view>
+            <view class="flavor-options">
+              <view 
+                class="flavor-option {{selectedFlavors[item.name] === option ? 'active' : ''}}"
+                wx:for="{{item.options}}" 
+                wx:for-item="option"
+                wx:key="option"
+                bindtap="selectFlavor"
+                data-name="{{item.name}}"
+                data-option="{{option}}">
+                {{option}}
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="flavor-footer">
+          <text class="flavor-price">¥{{currentDish.price}}</text>
+          <!-- 按钮区域包装器 -->
+          <view class="flavor-btn-wrapper">
+            <!-- 如果当前口味已加入购物车，显示加减按钮 -->
+            <view class="flavor-action" wx:if="{{currentCartItem}}">
+              <view class="flavor-btn-minus" bindtap="decreaseInDialog">-</view>
+              <text class="flavor-count">{{currentCartItem.quantity}}</text>
+              <view class="flavor-btn-plus" bindtap="increaseInDialog">+</view>
+            </view>
+            <!-- 否则显示加入购物车按钮 -->
+            <view class="flavor-confirm-btn" wx:else bindtap="confirmFlavor">加入购物车</view>
+          </view>
+        </view>
+      </view>
+      <!-- 关闭按钮 -->
+      <view class="flavor-close-btn" bindtap="closeFlavorDialog">
+        <text class="flavor-close-icon">✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 购物车弹窗 -->
+  <view class="cart-dialog-mask" wx:if="{{showCartDialog}}" bindtap="closeCartDialog">
+    <view class="cart-dialog" catchtap="stopPropagation">
+      <view class="cart-dialog-header">
+        <text class="cart-dialog-title">购物车</text>
+        <text class="cart-dialog-clear" bindtap="clearCart">清空</text>
+      </view>
+      <scroll-view scroll-y class="cart-dialog-content">
+        <view class="cart-dialog-item" wx:for="{{cartItems}}" wx:key="flavorKey">
+          <image class="cart-item-image" src="{{item.image}}" mode="aspectFill"></image>
+          <view class="cart-item-info">
+            <text class="cart-item-name">{{item.name}}</text>
+            <text class="cart-item-flavor" wx:if="{{item.flavorText}}">{{item.flavorText}}</text>
+          </view>
+          <view class="cart-item-right">
+            <view class="cart-item-bottom">
+              <text class="cart-item-price">¥{{item.price}}</text>
+              <view class="cart-item-action">
+                <view class="cart-item-btn-minus" bindtap="decreaseInCart" data-key="{{item.flavorKey}}">-</view>
+                <text class="cart-item-count">{{item.quantity}}</text>
+                <view class="cart-item-btn-plus" bindtap="increaseInCart" data-key="{{item.flavorKey}}">+</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>
