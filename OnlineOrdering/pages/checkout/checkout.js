@@ -8,8 +8,7 @@ Page({
     cartItems: [],
     totalAmount: 0,
     remark: '',
-    remarkLength: 0,
-    showFooter: false  // 控制底部栏显示
+    remarkLength: 0
   },
 
   onLoad(options) {
@@ -36,15 +35,6 @@ Page({
         customerId
       })
     }
-  },
-
-  onReady() {
-    // 页面渲染完成后延迟显示底部栏，避免页面切换时闪现
-    setTimeout(() => {
-      this.setData({
-        showFooter: true
-      })
-    }, 400)
   },
 
   // 备注输入
@@ -89,8 +79,6 @@ Page({
       }))
     }
 
-    console.log('提交订单数据:', orderData)
-
     // TODO: 调用后端API提交订单
     wx.showLoading({
       title: '提交中...'
@@ -100,8 +88,8 @@ Page({
     setTimeout(() => {
       wx.hideLoading()
       
-      // 模拟返回的订单ID
-      const orderId = Date.now()
+      // 模拟返回的订单ID - 使用模拟数据中待支付订单的ID
+      const orderId = 4  // 对应 mockOrderData.js 中 orderStatus === 1 的订单
       
       wx.showToast({
         title: '订单提交成功',
@@ -111,7 +99,7 @@ Page({
 
       // 清空购物车
       const pages = getCurrentPages()
-      const indexPage = pages[pages.length - 2]
+      const indexPage = pages.find(page => page.route === 'pages/index/index')
       if (indexPage) {
         indexPage.setData({
           cartItems: [],
@@ -121,7 +109,7 @@ Page({
         indexPage.updateDishCount()
       }
 
-      // 跳转到订单详情页
+      // 跳转到订单详情页（待支付状态）
       setTimeout(() => {
         wx.redirectTo({
           url: `/pages/order-detail/order-detail?id=${orderId}`

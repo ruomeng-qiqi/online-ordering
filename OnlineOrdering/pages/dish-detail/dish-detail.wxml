@@ -12,14 +12,14 @@
       <text class="dish-price">¥{{dish.price}}</text>
     </view>
     <view class="info-right">
-      <!-- 如果当前口味已加入购物车，显示加减按钮 -->
-      <view class="quantity-control" wx:if="{{currentQuantity > 0}}">
-        <view class="btn-minus" bindtap="decrease">-</view>
-        <text class="quantity">{{currentQuantity}}</text>
-        <view class="btn-plus" bindtap="increase">+</view>
+      <!-- 如果购物车中有该菜品，显示加减按钮 -->
+      <view class="quantity-control" wx:if="{{dishCount > 0}}">
+        <view class="btn-minus" bindtap="decreaseDish">-</view>
+        <text class="quantity">{{dishCount}}</text>
+        <view class="btn-plus" bindtap="addDish">+</view>
       </view>
       <!-- 否则显示加入购物车按钮 -->
-      <view class="add-cart-btn" wx:else bindtap="addToCart">
+      <view class="add-cart-btn" wx:else bindtap="addDish">
         <text>加入购物车</text>
       </view>
     </view>
@@ -29,5 +29,50 @@
   <view class="detail-section">
     <view class="section-title">商品详情</view>
     <text class="detail-text">{{dish.description}}</text>
+  </view>
+
+  <!-- 口味选择弹窗 -->
+  <view class="flavor-mask" wx:if="{{showFlavorDialog}}" bindtap="closeFlavorDialog">
+    <view class="flavor-wrapper" catchtap="stopPropagation">
+      <view class="flavor-dialog">
+        <view class="flavor-header">
+          <text class="flavor-title">{{currentDish.name}}</text>
+        </view>
+        <view class="flavor-content">
+          <view class="flavor-section" wx:for="{{currentDish.flavors}}" wx:key="name">
+            <view class="flavor-section-title">{{item.name}}</view>
+            <view class="flavor-options">
+              <view 
+                class="flavor-option {{selectedFlavors[item.name] === option ? 'active' : ''}}"
+                wx:for="{{item.options}}" 
+                wx:for-item="option"
+                wx:key="option"
+                bindtap="selectFlavor"
+                data-name="{{item.name}}"
+                data-option="{{option}}">
+                {{option}}
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="flavor-footer">
+          <text class="flavor-price">¥{{currentDish.price}}</text>
+          <view class="flavor-btn-wrapper">
+            <!-- 如果当前口味已加入购物车，显示加减按钮 -->
+            <view class="flavor-action" wx:if="{{currentCartItem}}">
+              <view class="flavor-btn-minus" bindtap="decreaseInDialog">-</view>
+              <text class="flavor-count">{{currentCartItem.quantity}}</text>
+              <view class="flavor-btn-plus" bindtap="increaseInDialog">+</view>
+            </view>
+            <!-- 否则显示加入购物车按钮 -->
+            <view class="flavor-confirm-btn" wx:else bindtap="confirmFlavor">加入购物车</view>
+          </view>
+        </view>
+      </view>
+      <!-- 关闭按钮 -->
+      <view class="flavor-close-btn" bindtap="closeFlavorDialog">
+        <text class="flavor-close-icon">✕</text>
+      </view>
+    </view>
   </view>
 </view>

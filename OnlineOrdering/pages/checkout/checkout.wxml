@@ -47,7 +47,7 @@
   </view>
 
   <!-- 底部提交按钮 -->
-  <view class="footer" wx:if="{{showFooter}}">
+  <view class="footer">
     <view class="footer-left">
       <text class="total-label">合计：</text>
       <text class="total-price">¥{{totalAmount}}</text>

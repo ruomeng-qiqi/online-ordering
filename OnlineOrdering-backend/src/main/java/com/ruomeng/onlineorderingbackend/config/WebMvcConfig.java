@@ -1,11 +1,9 @@
 package com.ruomeng.onlineorderingbackend.config;
 
 import com.ruomeng.onlineorderingbackend.interceptor.JwtInterceptor;
-import com.ruomeng.onlineorderingbackend.properties.WxMaProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -16,9 +14,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
     private JwtInterceptor jwtInterceptor;
-
-    @Autowired
-    private WxMaProperties wxMaProperties;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -36,16 +31,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/swagger-resources/**",    // Swagger 资源
                         "/v2/api-docs",             // Swagger 2 API 文档
                         "/favicon.ico",             // 网站图标
-                        "/error",                   // 错误页面
-                        "/qrcode/**"                // 小程序码图片
+                        "/error"                    // 错误页面
                 );
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 配置小程序码图片访问路径
-        // 将 /qrcode/** 映射到外部目录
-        registry.addResourceHandler("/qrcode/**")
-                .addResourceLocations("file:" + wxMaProperties.getQrcodePath());
     }
 }
