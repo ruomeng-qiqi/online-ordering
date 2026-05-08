@@ -8,6 +8,11 @@
     "pages/payment-success/payment-success",
     "pages/order/order",
     "pages/mine/mine",
+    "pages/member-center/member-center",
+    "pages/order-list/order-list",
+    "pages/points-record/points-record",
+    "pages/about/about",
+    "pages/settings/settings",
     "pages/logs/logs"
   ],
   "window": {

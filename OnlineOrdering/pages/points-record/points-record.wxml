@@ -1,0 +1,68 @@
+<!--pages/points-record/points-record.wxml-->
+<view class="page">
+  <!-- 非会员引导页 -->
+  <view class="non-member-guide" wx:if="{{!isMember}}">
+    <view class="guide-icon">👑</view>
+    <text class="guide-title">加入会员享积分权益</text>
+    <text class="guide-desc">成为会员后，消费即可获得积分，积分可抵扣现金</text>
+    <view class="guide-benefits">
+      <view class="benefit-item">
+        <text class="benefit-icon">✓</text>
+        <text class="benefit-text">消费获得积分</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-icon">✓</text>
+        <text class="benefit-text">积分抵扣现金</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-icon">✓</text>
+        <text class="benefit-text">积分永久有效</text>
+      </view>
+    </view>
+    <view class="guide-btn" bindtap="goToJoinMember">
+      <text>立即加入会员</text>
+    </view>
+  </view>
+
+  <!-- 会员积分记录 -->
+  <view class="member-content" wx:if="{{isMember}}">
+    <!-- 积分统计卡片 -->
+    <view class="points-summary">
+      <view class="summary-content">
+        <view class="summary-item">
+          <text class="summary-value">{{currentPoints}}</text>
+          <text class="summary-label">当前积分</text>
+        </view>
+        <view class="summary-divider"></view>
+        <view class="summary-item">
+          <text class="summary-value">{{totalPoints}}</text>
+          <text class="summary-label">累计积分</text>
+        </view>
+      </view>
+      <view class="use-points-btn" bindtap="goToOrder">
+        <text>去使用</text>
+      </view>
+    </view>
+
+    <!-- 积分记录列表 -->
+    <view class="record-list" wx:if="{{records.length > 0}}">
+      <view class="record-item" wx:for="{{records}}" wx:key="id">
+        <view class="record-info">
+          <text class="record-title">{{item.remark}}</text>
+          <text class="record-time">{{item.createTime}}</text>
+        </view>
+        <view class="record-right">
+          <text class="record-points {{item.points > 0 ? 'record-points-add' : 'record-points-minus'}}">
+            {{item.points > 0 ? '+' : ''}}{{item.points}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{records.length === 0}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无积分记录</text>
+    </view>
+  </view>
+</view>

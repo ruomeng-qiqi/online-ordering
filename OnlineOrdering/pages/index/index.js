@@ -30,6 +30,12 @@ Page({
     this.loadDishes()
   },
 
+  onShow() {
+    // 每次显示页面时更新菜品数量和购物车
+    this.calculateCart()
+    this.updateDishCount()
+  },
+
   // 加载分类列表
   loadCategories() {
     // TODO: 调用后端API获取分类数据

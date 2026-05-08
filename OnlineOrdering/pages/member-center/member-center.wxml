@@ -1,0 +1,70 @@
+<!--pages/member-center/member-center.wxml-->
+<view class="page">
+  <!-- 会员信息卡片 -->
+  <view class="member-card">
+    <view class="member-header">
+      <text class="member-icon">👑</text>
+      <view class="member-info">
+        <text class="member-title">尊贵会员</text>
+        <text class="member-name">{{memberInfo.nickName}}</text>
+      </view>
+    </view>
+    <view class="member-details">
+      <view class="detail-row">
+        <text class="detail-label">加入时间</text>
+        <text class="detail-value">{{memberInfo.joinTime}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分信息 -->
+  <view class="points-section">
+    <view class="section-title">我的积分</view>
+    <view class="points-cards">
+      <view class="points-card">
+        <text class="points-value">{{memberInfo.currentPoints}}</text>
+        <text class="points-label">当前积分</text>
+      </view>
+      <view class="points-card">
+        <text class="points-value">{{memberInfo.totalPoints}}</text>
+        <text class="points-label">累计积分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="benefits-section">
+    <view class="section-title">会员权益</view>
+    <view class="benefit-list">
+      <view class="benefit-item">
+        <view class="benefit-header">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-title">消费获得积分</text>
+        </view>
+        <text class="benefit-desc">每消费1元获得1积分，多消费多得</text>
+      </view>
+      <view class="benefit-item">
+        <view class="benefit-header">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-title">积分抵扣现金</text>
+        </view>
+        <text class="benefit-desc">100积分=1元，积分可直接抵扣订单金额</text>
+      </view>
+      <view class="benefit-item">
+        <view class="benefit-header">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-title">积分永久有效</text>
+        </view>
+        <text class="benefit-desc">积分不过期，随时可用，放心积累</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="quick-links">
+    <view class="link-item" bindtap="goToPointsRecord">
+      <text class="link-text">积分记录</text>
+      <text class="link-arrow">›</text>
+    </view>
+  </view>
+</view>

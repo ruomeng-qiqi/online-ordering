@@ -1,24 +1,91 @@
 <!--pages/mine/mine.wxml-->
-<view class="container">
-  <!-- 用户信息区域 -->
-  <view class="user-section">
-    <view class="user-info">
-      <image class="avatar" src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}" mode="aspectFill"></image>
-      <view class="user-detail">
-        <text class="nickname">{{userInfo.nickName || '点击登录'}}</text>
-        <text class="phone">{{userInfo.phone || ''}}</text>
+<view class="page">
+  <!-- 未登录状态 -->
+  <view class="user-section" wx:if="{{!isLogin}}">
+    <view class="login-prompt">
+      <image class="login-avatar" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" mode="aspectFill"></image>
+      <text class="login-text">登录后享受更多服务</text>
+      <view class="login-btn" bindtap="handleLogin">
+        <text>立即登录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已登录状态 -->
+  <view class="user-section" wx:if="{{isLogin}}">
+    <!-- 用户头部 -->
+    <view class="user-header" bindtap="handleUserClick">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="user-info">
+        <view class="user-name-row">
+          <text class="nickname">{{userInfo.nickName}}</text>
+          <view class="member-badge" wx:if="{{userInfo.isMember}}">
+            <text class="crown-icon">👑</text>
+            <text class="member-text">会员</text>
+          </view>
+        </view>
+        <text class="greeting">{{userInfo.greeting}}</text>
+      </view>
+    </view>
+
+    <!-- 积分和会员中心卡片（会员） -->
+    <view class="info-cards" wx:if="{{userInfo.isMember}}">
+      <view class="info-card" bindtap="handlePointsClick">
+        <view class="card-content">
+          <text class="card-value">{{userInfo.points}}</text>
+          <text class="card-label">我的积分</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+      <view class="info-card" bindtap="handleMemberCenter">
+        <view class="card-content">
+          <text class="card-value">会员中心</text>
+          <text class="card-label">查看权益</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 会员推广卡片（非会员） -->
+    <view class="member-promo-large" wx:if="{{!userInfo.isMember}}" bindtap="handleJoinMember">
+      <view class="promo-header">
+        <text class="promo-icon-large">👑</text>
+        <view class="promo-text-large">
+          <text class="promo-title-large">加入会员</text>
+          <text class="promo-subtitle-large">开启积分权益</text>
+        </view>
+      </view>
+      <view class="promo-benefits">
+        <view class="benefit-item">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-text">消费获得积分</text>
+        </view>
+        <view class="benefit-item">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-text">积分可抵扣现金</text>
+        </view>
+        <view class="benefit-item">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-text">积分永久有效</text>
+        </view>
+      </view>
+      <view class="promo-btn-large">
+        <text class="promo-btn-text-large">立即加入会员</text>
+        <text class="promo-btn-arrow-large">›</text>
       </view>
     </view>
   </view>
 
   <!-- 菜单列表 -->
-  <view class="menu-section">
-    <view class="menu-item" wx:for="{{menuList}}" wx:key="title" 
-          bindtap="handleMenuClick" data-url="{{item.url}}">
-      <view class="menu-left">
-        <text class="menu-icon">{{item.icon}}</text>
-        <text class="menu-title">{{item.title}}</text>
-      </view>
+  <view class="menu-list">
+    <view 
+      class="menu-item" 
+      wx:for="{{menuList}}" 
+      wx:key="title"
+      bindtap="handleMenuClick" 
+      data-url="{{item.url}}"
+      data-need-login="{{item.needLogin}}">
+      <text class="menu-title">{{item.title}}</text>
       <text class="menu-arrow">›</text>
     </view>
   </view>

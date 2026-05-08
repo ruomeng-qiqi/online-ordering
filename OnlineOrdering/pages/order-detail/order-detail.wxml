@@ -11,6 +11,8 @@
           </view>
         </view>
         <text class="create-time">下单时间：{{order.createTime}}</text>
+        <text class="create-time" wx:if="{{order.orderStatus === 2 && order.checkoutTime}}">支付时间：{{order.checkoutTime}}</text>
+        <text class="create-time" wx:if="{{order.orderStatus === 3 && order.updateTime}}">取消时间：{{order.updateTime}}</text>
       </view>
     </view>
 

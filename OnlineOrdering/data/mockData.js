@@ -67,7 +67,7 @@ export const mockDishes = [
 
 // 店铺信息
 export const mockShopInfo = {
-  name: '味美小馆（中山路店）',
+  name: '在线点餐',
   description: '欢迎光临，祝您用餐愉快！',
   image: '/assets/shop.jpg',
   tag1: '营业中',
