@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 顾客Mapper
+ * 顾客Mapper（管理端）
  */
 @Mapper
 public interface CustomerMapper {
@@ -38,6 +38,11 @@ public interface CustomerMapper {
      * 更新顾客积分
      */
     int updatePoints(Customer customer);
+
+    /**
+     * 更新用户信息
+     */
+    int updateInfo(Customer customer);
 
     /**
      * 删除顾客

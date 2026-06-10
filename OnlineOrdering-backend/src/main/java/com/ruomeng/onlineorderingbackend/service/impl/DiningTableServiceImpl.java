@@ -209,4 +209,21 @@ public class DiningTableServiceImpl implements DiningTableService {
         // 返回分页结果
         return new PageResult(total, records);
     }
+
+    /**
+     * 根据餐台号查询餐台
+     */
+    @Override
+    public DiningTableVO getByTableNumber(String tableNumber) {
+        // 查询餐台
+        DiningTable diningTable = diningTableMapper.selectByTableNumber(tableNumber);
+        if (diningTable == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "餐台不存在");
+        }
+
+        // 转换为VO
+        DiningTableVO diningTableVO = new DiningTableVO();
+        BeanUtils.copyProperties(diningTable, diningTableVO);
+        return diningTableVO;
+    }
 }

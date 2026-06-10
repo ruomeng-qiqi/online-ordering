@@ -13,11 +13,6 @@
         text-color="#bfcbd9"
         active-text-color="#409eff"
       >
-        <el-menu-item index="/dashboard">
-          <el-icon><HomeFilled /></el-icon>
-          <span>首页</span>
-        </el-menu-item>
-        
         <el-menu-item index="/category">
           <el-icon><Menu /></el-icon>
           <span>分类管理</span>
@@ -56,7 +51,7 @@
       <el-header class="header">
         <div class="header-left">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>在线点餐管理系统</el-breadcrumb-item>
             <el-breadcrumb-item v-if="currentRoute">{{ currentRoute }}</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
@@ -92,7 +87,6 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { logout } from '@/api/admin'
 import {
-  HomeFilled,
   Menu,
   Food,
   Box,

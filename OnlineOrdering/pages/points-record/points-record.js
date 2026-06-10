@@ -1,123 +1,140 @@
 // pages/points-record/points-record.js
 Page({
   data: {
-    isMember: true, // 是否会员，从用户信息获取
-    currentPoints: 1580,
-    totalPoints: 3200,
+    isMember: false,
+    customerId: null,
+    currentPoints: 0,
+    totalPoints: 0,
     records: []
   },
 
   onLoad() {
+    const customerId = wx.getStorageSync('customerId')
+    if (!customerId) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/mine/mine'
+          })
+        }
+      })
+      return
+    }
+    
+    this.setData({ customerId })
     this.loadUserInfo()
   },
 
   onShow() {
-    this.loadUserInfo()
+    if (this.data.customerId) {
+      this.loadUserInfo()
+    }
   },
 
   // 加载用户信息
   loadUserInfo() {
-    // TODO: 调用后端API获取用户信息
-    // GET /api/customer/info
+    wx.showLoading({
+      title: '加载中...'
+    })
     
-    // 模拟数据 - 从全局或缓存中获取用户信息
-    const isMember = true // 实际应该从后端API获取
-    
-    this.setData({ isMember })
-    
-    if (isMember) {
-      this.loadPointsRecords()
-    }
+    wx.request({
+      url: getApp().globalData.baseUrl + '/user/customer/info',
+      method: 'GET',
+      header: {
+        'Authorization': 'Bearer ' + wx.getStorageSync('token')
+      },
+      success: (res) => {
+        if (res.data.code === 200) {
+          const userData = res.data.data
+          
+          this.setData({
+            isMember: userData.isMember === 1,
+            currentPoints: userData.points || 0,
+            totalPoints: userData.totalPoints || 0
+          })
+          
+          if (userData.isMember === 1) {
+            this.loadPointsRecords()
+          } else {
+            wx.hideLoading()
+          }
+        } else {
+          wx.hideLoading()
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'none'
+          })
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('加载用户信息失败', err)
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none'
+        })
+      }
+    })
   },
 
   // 加载积分记录
   loadPointsRecords() {
-    // TODO: 调用后端API获取积分记录
-    // GET /api/points-record/list?customerId={customerId}
-    
-    // 模拟数据
-    const records = [
-      {
-        id: 1,
-        customerId: 1,
-        type: 1, // 1-订单获得，2-积分抵扣，3-手动调整
-        points: 100,
-        orderId: 1,
-        remark: '订单消费获得',
-        createTime: '2026-05-07 16:30:00'
+    wx.request({
+      url: getApp().globalData.baseUrl + '/user/customer/points-records',
+      method: 'GET',
+      header: {
+        'Authorization': 'Bearer ' + wx.getStorageSync('token')
       },
-      {
-        id: 2,
-        customerId: 1,
-        type: 2,
-        points: -2000,
-        orderId: 1,
-        remark: '订单消费抵扣',
-        createTime: '2026-05-07 15:20:00'
+      success: (res) => {
+        wx.hideLoading()
+        
+        if (res.data.code === 200) {
+          const records = res.data.data || []
+          
+          // 添加类型文本
+          const typeTextMap = {
+            1: '订单获得',
+            2: '积分抵扣',
+            3: '手动调整'
+          }
+          
+          const processedRecords = records.map(record => {
+            // 处理时间格式
+            let createTime = record.createTime
+            if (createTime) {
+              createTime = createTime.replace('T', ' ')
+              // 只保留到秒
+              if (createTime.includes('.')) {
+                createTime = createTime.split('.')[0]
+              }
+            }
+            
+            return {
+              ...record,
+              typeText: typeTextMap[record.type],
+              createTime: createTime
+            }
+          })
+          
+          this.setData({ records: processedRecords })
+        } else {
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'none'
+          })
+        }
       },
-      {
-        id: 3,
-        customerId: 1,
-        type: 1,
-        points: 80,
-        orderId: 3,
-        remark: '订单消费获得',
-        createTime: '2026-05-05 20:00:00'
-      },
-      {
-        id: 4,
-        customerId: 1,
-        type: 3,
-        points: 500,
-        orderId: null,
-        remark: '管理员手动调整',
-        createTime: '2026-05-01 10:00:00'
-      },
-      {
-        id: 5,
-        customerId: 1,
-        type: 1,
-        points: 150,
-        orderId: 6,
-        remark: '订单消费获得',
-        createTime: '2026-05-03 17:45:00'
-      },
-      {
-        id: 6,
-        customerId: 1,
-        type: 2,
-        points: -5000,
-        orderId: 2,
-        remark: '订单消费抵扣',
-        createTime: '2026-05-06 12:30:00'
-      },
-      {
-        id: 7,
-        customerId: 1,
-        type: 2,
-        points: -5000,
-        orderId: 2,
-        remark: '订单消费抵扣',
-        createTime: '2026-05-06 12:30:00'
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('加载积分记录失败', err)
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none'
+        })
       }
-    ]
-
-    // 添加类型文本
-    const typeTextMap = {
-      1: '订单获得',
-      2: '积分抵扣',
-      3: '手动调整'
-    }
-
-    const processedRecords = records.map(record => ({
-      ...record,
-      typeText: typeTextMap[record.type]
-    }))
-
-    this.setData({ 
-      records: processedRecords,
-      currentPoints: 1580,
-      totalPoints: 3200
     })
   },
 
@@ -127,14 +144,60 @@ Page({
       title: '加入会员',
       content: '成为会员即可享受消费积分、积分抵扣等权益',
       confirmText: '立即加入',
+      cancelText: '取消',
       success: (res) => {
         if (res.confirm) {
-          // TODO: 跳转到会员开通页面或调用开通接口
-          wx.showToast({
-            title: '功能开发中',
-            icon: 'none'
+          this.joinMember()
+        }
+      }
+    })
+  },
+
+  /**
+   * 调用后端加入会员接口
+   */
+  joinMember() {
+    wx.showLoading({
+      title: '加入中...'
+    })
+    
+    wx.request({
+      url: getApp().globalData.baseUrl + '/user/customer/join-member',
+      method: 'POST',
+      header: {
+        'Authorization': 'Bearer ' + wx.getStorageSync('token'),
+        'Content-Type': 'application/json'
+      },
+      data: {},
+      success: (res) => {
+        wx.hideLoading()
+        
+        if (res.data.code === 200) {
+          wx.showModal({
+            title: '恭喜您',
+            content: '成功加入会员！快去消费获取积分吧～',
+            showCancel: false,
+            confirmText: '好的',
+            success: () => {
+              // 刷新页面
+              this.loadUserInfo()
+            }
+          })
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: res.data.message || '加入会员失败',
+            showCancel: false
           })
         }
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        console.error('加入会员失败', err)
+        wx.showToast({
+          title: '加入失败',
+          icon: 'none'
+        })
       }
     })
   },

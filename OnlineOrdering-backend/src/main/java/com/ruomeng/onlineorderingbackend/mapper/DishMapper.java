@@ -54,4 +54,10 @@ public interface DishMapper {
      */
     @Select("SELECT COUNT(*) FROM dish WHERE category_id = #{categoryId}")
     int countByCategoryId(Long categoryId);
+
+    /**
+     * 根据分类查询菜品列表
+     */
+    @Select("SELECT * FROM dish WHERE category_id = #{categoryId} AND status = 1 ORDER BY create_time DESC")
+    List<Dish> listByCategoryId(@Param("categoryId") Long categoryId);
 }

@@ -54,4 +54,10 @@ public interface SetmealMapper {
      */
     @Select("SELECT COUNT(*) FROM setmeal WHERE category_id = #{categoryId}")
     int countByCategoryId(Long categoryId);
+
+    /**
+     * 根据分类ID和状态查询套餐列表
+     */
+    @Select("SELECT * FROM setmeal WHERE category_id = #{categoryId} AND status = #{status} ORDER BY create_time DESC")
+    List<Setmeal> selectByCategoryIdAndStatus(@Param("categoryId") Long categoryId, @Param("status") Integer status);
 }

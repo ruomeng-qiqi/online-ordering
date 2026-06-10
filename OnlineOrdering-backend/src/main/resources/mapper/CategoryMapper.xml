@@ -39,5 +39,4 @@
         </where>
         ORDER BY sort ASC, update_time DESC
     </select>
-
 </mapper>

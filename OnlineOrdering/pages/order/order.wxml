@@ -56,7 +56,7 @@
       <view class="order-footer">
         <view class="order-actions" catchtap="stopPropagation">
           <!-- 待支付状态 -->
-          <view class="action-btn cancel-btn" wx:if="{{item.orderStatus === 1}}" bindtap="cancelOrder" data-id="{{item.id}}">取消订单</view>
+          <view class="action-btn secondary-btn" wx:if="{{item.orderStatus === 1}}" bindtap="continueOrder" data-id="{{item.id}}">继续点餐</view>
           <view class="action-btn primary-btn" wx:if="{{item.orderStatus === 1}}" bindtap="continuePay" data-id="{{item.id}}">我要买单</view>
           
           <!-- 已完成状态 -->

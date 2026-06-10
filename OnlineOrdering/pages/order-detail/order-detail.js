@@ -1,10 +1,10 @@
 // pages/order-detail/order-detail.js
-import { mockOrders } from '../../data/mockOrderData.js'
+const orderApi = require('../../api/order.js')
 
 Page({
   data: {
     orderId: null,
-    // 订单信息 - 对应 orders 表
+    // 订单信息
     order: {
       id: null,
       orderNumber: '',
@@ -19,12 +19,12 @@ Page({
       pointsUsed: 0,
       pointsEarned: 0,
       paymentMethod: null,
-      orderStatus: null,  // null 避免闪烁
+      orderStatus: null,
       remark: '',
       cancelReason: '',
       createTime: ''
     },
-    // 订单明细 - 对应 order_detail 表
+    // 订单明细
     orderDetails: [],
     // 计算后的实付金额
     actualAmount: 0,
@@ -43,24 +43,18 @@ Page({
 
   // 加载订单详情
   loadOrderDetail(id) {
-    // TODO: 调用后端API获取订单详情
-    // GET /api/order/{id}
-    
-    // 使用模拟数据
-    setTimeout(() => {
-      // 从 mockOrderData 中查找对应的订单
-      const mockOrder = mockOrders.find(order => order.id == id)
-      
-      if (!mockOrder) {
-        wx.showToast({
-          title: '订单不存在',
-          icon: 'none'
-        })
-        return
-      }
+    wx.showLoading({
+      title: '加载中...'
+    })
 
-      // 解析口味信息
-      const details = mockOrder.details.map(item => {
+    // 调用后端API获取订单详情
+    orderApi.getOrderById(id).then(result => {
+      wx.hideLoading()
+      
+      const orderData = result.data
+
+      // 处理订单明细，解析口味信息
+      const details = orderData.details.map(item => {
         if (item.flavor) {
           try {
             const flavorObj = JSON.parse(item.flavor)
@@ -68,25 +62,49 @@ Page({
           } catch (e) {
             item.flavorText = ''
           }
+        } else {
+          item.flavorText = ''
         }
         return item
       })
 
       // 计算实付金额
-      const actualAmount = mockOrder.actualAmount || 
-        (mockOrder.totalAmount - mockOrder.discountAmount - mockOrder.pointsDeduction)
+      const actualAmount = orderData.actualAmount || 
+        (orderData.totalAmount - orderData.discountAmount - orderData.pointsDeduction)
+
+      // 处理时间格式，将 T 替换为空格
+      if (orderData.createTime) {
+        orderData.createTime = orderData.createTime.replace('T', ' ')
+      }
+      if (orderData.checkoutTime) {
+        orderData.checkoutTime = orderData.checkoutTime.replace('T', ' ')
+      }
+
+      // 处理桌号显示：如果没有则显示 '-'
+      if (!orderData.tableNumber) {
+        orderData.tableNumber = '-'
+      }
 
       this.setData({
-        order: {
-          ...mockOrder,
-          tableNumber: mockOrder.tableName
-        },
+        order: orderData,
         orderDetails: details,
         actualAmount: actualAmount.toFixed(2),
-        orderStatusText: this.getOrderStatusText(mockOrder.orderStatus),
-        paymentMethodText: this.getPaymentMethodText(mockOrder.paymentMethod)
+        orderStatusText: this.getOrderStatusText(orderData.orderStatus),
+        paymentMethodText: this.getPaymentMethodText(orderData.paymentMethod)
       })
-    }, 300)
+    }).catch(err => {
+      wx.hideLoading()
+      console.error('加载订单详情失败', err)
+      wx.showToast({
+        title: err.message || '加载失败',
+        icon: 'none'
+      })
+      
+      // 返回上一页
+      setTimeout(() => {
+        wx.navigateBack()
+      }, 1500)
+    })
   },
 
   // 获取订单状态文本
@@ -106,17 +124,6 @@ Page({
       2: '线下支付'
     }
     return methodMap[method] || '-'
-  },
-
-  // 格式化时间
-  formatTime(date) {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hour = String(date.getHours()).padStart(2, '0')
-    const minute = String(date.getMinutes()).padStart(2, '0')
-    const second = String(date.getSeconds()).padStart(2, '0')
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`
   },
 
   // 继续点餐
@@ -144,15 +151,9 @@ Page({
           // DELETE /api/order/{id}
           
           wx.showToast({
-            title: '订单已删除',
-            icon: 'success',
-            duration: 2000
+            title: '功能开发中',
+            icon: 'none'
           })
-          
-          // 返回订单列表
-          setTimeout(() => {
-            wx.navigateBack()
-          }, 2000)
         }
       }
     })
@@ -167,20 +168,11 @@ Page({
         if (res.confirm) {
           // TODO: 调用后端API将订单菜品加入购物车
           // POST /api/cart/batch-add
-          // 参数: this.data.orderDetails
           
           wx.showToast({
-            title: '已加入购物车',
-            icon: 'success',
-            duration: 2000
+            title: '功能开发中',
+            icon: 'none'
           })
-          
-          // 跳转到首页
-          setTimeout(() => {
-            wx.switchTab({
-              url: '/pages/index/index'
-            })
-          }, 2000)
         }
       }
     })

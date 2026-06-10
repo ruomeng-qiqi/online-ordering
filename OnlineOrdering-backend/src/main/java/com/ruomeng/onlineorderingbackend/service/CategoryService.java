@@ -3,7 +3,10 @@ package com.ruomeng.onlineorderingbackend.service;
 import com.ruomeng.onlineorderingbackend.common.PageResult;
 import com.ruomeng.onlineorderingbackend.model.dto.CategoryDTO;
 import com.ruomeng.onlineorderingbackend.model.dto.CategoryPageQueryDTO;
+import com.ruomeng.onlineorderingbackend.model.entity.Category;
 import com.ruomeng.onlineorderingbackend.model.vo.CategoryVO;
+
+import java.util.List;
 
 /**
  * 分类服务接口
@@ -39,4 +42,9 @@ public interface CategoryService {
      * 更新分类状态
      */
     void updateStatus(Long id, Integer status);
+
+    /**
+     * 查询分类列表
+     */
+    List<Category> list();
 }

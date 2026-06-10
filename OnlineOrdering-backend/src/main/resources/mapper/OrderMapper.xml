@@ -36,7 +36,10 @@
             c.nickname AS customer_name,
             c.is_member,
             o.table_id,
-            t.table_number,
+            CASE
+                WHEN t.table_number LIKE '%_deleted_%' THEN SUBSTRING_INDEX(t.table_number, '_deleted_', 1)
+                ELSE t.table_number
+            END AS table_number,
             t.table_name,
             o.checkout_time,
             o.total_amount,
@@ -114,5 +117,38 @@
         </set>
         WHERE id = #{id}
     </update>
+
+    <!-- 插入订单（默认 is_deleted = 0） -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO orders (
+            order_number, 
+            customer_id, 
+            table_id, 
+            total_amount, 
+            discount_amount,
+            points_deduction, 
+            points_used, 
+            points_earned, 
+            order_status, 
+            remark, 
+            is_deleted, 
+            create_time, 
+            update_time
+        ) VALUES (
+            #{orderNumber}, 
+            #{customerId}, 
+            #{tableId}, 
+            #{totalAmount}, 
+            #{discountAmount},
+            #{pointsDeduction}, 
+            #{pointsUsed}, 
+            #{pointsEarned}, 
+            #{orderStatus}, 
+            #{remark}, 
+            0, 
+            #{createTime}, 
+            #{updateTime}
+        )
+    </insert>
 
 </mapper>

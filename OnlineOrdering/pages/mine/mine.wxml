@@ -14,7 +14,7 @@
   <!-- 已登录状态 -->
   <view class="user-section" wx:if="{{isLogin}}">
     <!-- 用户头部 -->
-    <view class="user-header" bindtap="handleUserClick">
+    <view class="user-header">
       <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
       <view class="user-info">
         <view class="user-name-row">

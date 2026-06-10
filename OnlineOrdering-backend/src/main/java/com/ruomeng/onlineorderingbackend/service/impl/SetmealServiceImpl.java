@@ -233,6 +233,29 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     /**
+     * 根据分类ID和状态查询套餐列表
+     */
+    @Override
+    public List<SetmealVO> listByCategoryIdAndStatus(Long categoryId, Integer status) {
+        // 查询套餐列表
+        List<Setmeal> setmeals = setmealMapper.selectByCategoryIdAndStatus(categoryId, status);
+        
+        // 转换为VO列表
+        return setmeals.stream()
+                .map(setmeal -> {
+                    SetmealVO vo = new SetmealVO();
+                    BeanUtils.copyProperties(setmeal, vo);
+                    
+                    // 查询套餐菜品
+                    List<SetmealDish> setmealDishes = setmealDishMapper.selectBySetmealId(setmeal.getId());
+                    vo.setDishes(convertSetmealDishesToVO(setmealDishes));
+                    
+                    return vo;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 保存套餐菜品关系
      */
     private void saveSetmealDishes(Long setmealId, List<SetmealDTO.SetmealDishDTO> dishDTOs) {

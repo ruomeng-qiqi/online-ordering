@@ -21,8 +21,8 @@
         </view>
       </view>
     </view>
-    <view class="table-number">
-      <text class="table-text">桌号 {{tableNumber}}</text>
+    <view class="table-number" bindtap="onTableNumberTap">
+      <text class="table-text">{{tableNumber === '点击扫码' ? '点击扫码' : '桌号 ' + tableNumber}}</text>
     </view>
   </view>
 
@@ -50,8 +50,9 @@
       <view class="dish-content">
         <scroll-view scroll-y class="dish-scroll">
           <!-- 当前分类的菜品 -->
-          <view class="section">
-            <view class="dish-item" wx:for="{{dishes}}" wx:key="id" wx:if="{{item.categoryId === currentCategory && item.status === 1}}">
+          <view class="section" wx:if="{{dishes.length > 0}}">
+            <view class="section-title">菜品</view>
+            <view class="dish-item" wx:for="{{dishes}}" wx:key="id">
               <image class="dish-image" src="{{item.image}}" mode="aspectFill" bindtap="goToDishDetail" data-id="{{item.id}}"></image>
               <view class="dish-info" bindtap="goToDishDetail" data-id="{{item.id}}">
                 <text class="dish-name">{{item.name}}</text>
@@ -60,9 +61,32 @@
                   <text class="dish-price">¥{{item.price}}</text>
                   <view class="dish-action" catchtap="stopPropagation">
                     <view class="btn-minus" wx:if="{{item.count > 0}}" 
-                          bindtap="decreaseDish" data-id="{{item.id}}">-</view>
+                          bindtap="decreaseDish" data-id="{{item.id}}" data-type="dish">-</view>
                     <text class="count" wx:if="{{item.count > 0}}">{{item.count}}</text>
-                    <view class="add-btn" bindtap="addDish" data-id="{{item.id}}">
+                    <view class="add-btn" bindtap="addDish" data-id="{{item.id}}" data-type="dish">
+                      <text class="add-icon">+</text>
+                    </view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <!-- 当前分类的套餐 -->
+          <view class="section" wx:if="{{setmeals.length > 0}}">
+            <view class="section-title">套餐</view>
+            <view class="dish-item" wx:for="{{setmeals}}" wx:key="id">
+              <image class="dish-image" src="{{item.image}}" mode="aspectFill"></image>
+              <view class="dish-info">
+                <text class="dish-name">{{item.name}}</text>
+                <text class="dish-desc">{{item.description}}</text>
+                <view class="dish-footer">
+                  <text class="dish-price">¥{{item.price}}</text>
+                  <view class="dish-action" catchtap="stopPropagation">
+                    <view class="btn-minus" wx:if="{{item.count > 0}}" 
+                          bindtap="decreaseDish" data-id="{{item.id}}" data-type="setmeal">-</view>
+                    <text class="count" wx:if="{{item.count > 0}}">{{item.count}}</text>
+                    <view class="add-btn" bindtap="addDish" data-id="{{item.id}}" data-type="setmeal">
                       <text class="add-icon">+</text>
                     </view>
                   </view>

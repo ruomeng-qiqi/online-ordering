@@ -11,13 +11,13 @@ const routes = [
   {
     path: '/',
     component: () => import('@/layout/Index.vue'),
-    redirect: '/dashboard',
+    redirect: '/category',
     children: [
       {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('@/views/Dashboard.vue'),
-        meta: { title: '首页' }
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/Category/Index.vue'),
+        meta: { title: '分类管理' }
       },
       {
         path: 'dish',
@@ -30,12 +30,6 @@ const routes = [
         name: 'DishEdit',
         component: () => import('@/views/Dish/Edit.vue'),
         meta: { title: '菜品编辑' }
-      },
-      {
-        path: 'category',
-        name: 'Category',
-        component: () => import('@/views/Category/Index.vue'),
-        meta: { title: '分类管理' }
       },
       {
         path: 'setmeal',

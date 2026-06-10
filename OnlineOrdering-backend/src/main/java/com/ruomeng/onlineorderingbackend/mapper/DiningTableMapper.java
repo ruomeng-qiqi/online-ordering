@@ -40,6 +40,11 @@ public interface DiningTableMapper {
     DiningTable selectById(Long id);
 
     /**
+     * 根据ID查询餐台（包括已删除的，用于订单查询）
+     */
+    DiningTable selectByIdIncludeDeleted(Long id);
+
+    /**
      * 根据餐台号查询餐台（只查询未删除的）
      */
     @Select("SELECT * FROM dining_table WHERE table_number = #{tableNumber} AND deleted = 0")

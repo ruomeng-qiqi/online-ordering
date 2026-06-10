@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 订单VO
@@ -114,4 +115,25 @@ public class OrderVO implements Serializable {
      * 更新时间
      */
     private LocalDateTime updateTime;
+
+    /**
+     * 订单明细列表
+     */
+    private List<OrderDetailItemVO> details;
+
+    /**
+     * 订单明细项VO
+     */
+    @Data
+    public static class OrderDetailItemVO {
+        private Long id;
+        private Long dishId;
+        private Long setmealId;
+        private String name;
+        private String image;
+        private Integer quantity;
+        private BigDecimal price;
+        private BigDecimal amount;
+        private String flavor;
+    }
 }

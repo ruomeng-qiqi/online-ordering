@@ -1,5 +1,5 @@
 // pages/dish-detail/dish-detail.js
-import { mockDishes } from '../../data/mockData.js'
+const { getDishById } = require('../../api/dish.js')
 
 Page({
   data: {
@@ -40,13 +40,8 @@ Page({
 
   // 加载菜品详情
   loadDishDetail(id) {
-    // TODO: 调用后端API获取菜品详情
-    // GET /api/dish/{id}
-    
-    // 使用模拟数据
-    const dish = mockDishes.find(d => d.id === id)
-    
-    if (dish) {
+    getDishById(id).then(res => {
+      const dish = res.data
       this.setData({
         dish: {
           id: dish.id,
@@ -59,14 +54,17 @@ Page({
         },
         flavors: dish.flavors || []
       })
-
       this.updateDishCount()
-    } else {
+    }).catch(err => {
+      console.error('加载菜品详情失败', err)
       wx.showToast({
         title: '菜品不存在',
         icon: 'none'
       })
-    }
+      setTimeout(() => {
+        wx.navigateBack()
+      }, 1500)
+    })
   },
 
   // 添加菜品

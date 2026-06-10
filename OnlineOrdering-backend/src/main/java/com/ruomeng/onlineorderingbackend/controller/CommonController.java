@@ -22,20 +22,35 @@ import java.util.Date;
 @Api(tags = "通用接口")
 @Slf4j
 @RestController
-@RequestMapping("/admin/common")
 public class CommonController {
 
     @Autowired
     private AliOssUtil aliOssUtil;
 
     /**
-     * 文件上传
+     * 管理端文件上传
      */
-    @PostMapping("/upload")
-    @ApiOperation("文件上传")
-    public Result<String> upload(MultipartFile file, String type) {
-        log.info("文件上传：{}，类型：{}", file.getOriginalFilename(), type);
-        
+    @PostMapping("/admin/common/upload")
+    @ApiOperation("管理端文件上传")
+    public Result<String> adminUpload(MultipartFile file, String type) {
+        log.info("管理端文件上传：{}，类型：{}", file.getOriginalFilename(), type);
+        return uploadFile(file, type);
+    }
+
+    /**
+     * 用户端文件上传
+     */
+    @PostMapping("/common/upload")
+    @ApiOperation("用户端文件上传")
+    public Result<String> userUpload(MultipartFile file, String type) {
+        log.info("用户端文件上传：{}，类型：{}", file.getOriginalFilename(), type);
+        return uploadFile(file, type);
+    }
+
+    /**
+     * 文件上传通用方法
+     */
+    private Result<String> uploadFile(MultipartFile file, String type) {
         // 获取原始文件名
         String originalFilename = file.getOriginalFilename();
         
@@ -69,6 +84,8 @@ public class CommonController {
                 return "dish/";
             case "setmeal":
                 return "setmeal/";
+            case "avatar":
+                return "avatar/";
             default:
                 return "";
         }

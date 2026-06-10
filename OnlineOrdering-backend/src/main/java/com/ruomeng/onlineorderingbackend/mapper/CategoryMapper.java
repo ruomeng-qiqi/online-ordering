@@ -5,6 +5,8 @@ import com.ruomeng.onlineorderingbackend.model.dto.CategoryPageQueryDTO;
 import com.ruomeng.onlineorderingbackend.model.entity.Category;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 /**
  * 分类Mapper
  */
@@ -42,4 +44,10 @@ public interface CategoryMapper {
      * 更新分类状态
      */
     int updateStatus(Category category);
+
+    /**
+     * 查询分类列表
+     */
+    @Select("SELECT * FROM category WHERE status = 1 ORDER BY sort ASC")
+    List<Category> list();
 }

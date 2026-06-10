@@ -195,4 +195,12 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新状态失败");
         }
     }
+
+    /**
+     * 查询分类列表
+     */
+    @Override
+    public List<Category> list() {
+        return categoryMapper.list();
+    }
 }

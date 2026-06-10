@@ -317,4 +317,30 @@ public class DishServiceImpl implements DishService {
             return flavorVO;
         }).collect(Collectors.toList());
     }
+
+    /**
+     * 根据分类查询菜品列表
+     */
+    @Override
+    public List<DishVO> listByCategoryId(Long categoryId) {
+        // 校验参数
+        if (categoryId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "分类ID不能为空");
+        }
+        
+        // 查询起售的菜品
+        List<Dish> dishes = dishMapper.listByCategoryId(categoryId);
+        
+        // 转换为VO列表
+        return dishes.stream().map(dish -> {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(dish, dishVO);
+            
+            // 查询口味
+            List<DishFlavor> flavors = dishFlavorMapper.selectByDishId(dish.getId());
+            dishVO.setFlavors(convertFlavorsToVO(flavors));
+            
+            return dishVO;
+        }).collect(Collectors.toList());
+    }
 }

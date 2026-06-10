@@ -42,4 +42,19 @@ public interface CustomerService {
      * 查询顾客积分记录
      */
     List<PointsRecordVO> getPointsRecords(Long customerId);
+
+    /**
+     * 获取顾客积分
+     */
+    Integer getCustomerPoints(Long customerId);
+
+    /**
+     * 加入会员
+     */
+    void joinMember(Long customerId);
+
+    /**
+     * 更新用户信息
+     */
+    void updateCustomerInfo(Long customerId, String nickname, String avatar, Integer gender);
 }

@@ -23,8 +23,15 @@
     <!-- 更新顾客状态 -->
     <update id="updateStatus">
         UPDATE customer 
-        SET status = #{status}, 
-            update_time = #{updateTime} 
+        <set>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="isMember != null">
+                is_member = #{isMember},
+            </if>
+            update_time = #{updateTime}
+        </set>
         WHERE id = #{id}
     </update>
 
@@ -34,6 +41,24 @@
         SET points = #{points}, 
             total_points = #{totalPoints}, 
             update_time = #{updateTime} 
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新用户信息 -->
+    <update id="updateInfo">
+        UPDATE customer 
+        <set>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+            <if test="gender != null">
+                gender = #{gender},
+            </if>
+            update_time = #{updateTime}
+        </set>
         WHERE id = #{id}
     </update>
 

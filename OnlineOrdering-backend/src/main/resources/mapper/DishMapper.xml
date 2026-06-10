@@ -54,5 +54,4 @@
         </where>
         ORDER BY update_time DESC
     </select>
-
 </mapper>

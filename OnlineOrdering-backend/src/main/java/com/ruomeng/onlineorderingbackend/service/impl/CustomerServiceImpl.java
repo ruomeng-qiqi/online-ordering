@@ -212,4 +212,81 @@ public class CustomerServiceImpl implements CustomerService {
                 })
                 .collect(Collectors.toList());
     }
+
+    /**
+     * 获取顾客积分
+     */
+    @Override
+    public Integer getCustomerPoints(Long customerId) {
+        Customer customer = customerMapper.selectById(customerId);
+        if (customer == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "顾客不存在");
+        }
+        return customer.getPoints() != null ? customer.getPoints() : 0;
+    }
+
+    /**
+     * 加入会员
+     */
+    @Override
+    @Transactional
+    public void joinMember(Long customerId) {
+        // 1. 查询顾客是否存在
+        Customer customer = customerMapper.selectById(customerId);
+        if (customer == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "顾客不存在");
+        }
+
+        // 2. 检查是否已经是会员
+        if (customer.getIsMember() == 1) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "您已经是会员了");
+        }
+
+        // 3. 更新会员状态
+        customer.setIsMember(1);
+        customer.setStatus(null); // 不更新status字段
+        customer.setUpdateTime(LocalDateTime.now());
+        int result = customerMapper.updateStatus(customer);
+        if (result <= 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "加入会员失败");
+        }
+    }
+
+    /**
+     * 更新用户信息
+     */
+    @Override
+    @Transactional
+    public void updateCustomerInfo(Long customerId, String nickname, String avatar, Integer gender) {
+        // 1. 查询顾客是否存在
+        Customer customer = customerMapper.selectById(customerId);
+        if (customer == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "顾客不存在");
+        }
+
+        // 2. 更新信息
+        boolean needUpdate = false;
+        if (nickname != null && !nickname.trim().isEmpty()) {
+            customer.setNickname(nickname);
+            needUpdate = true;
+        }
+        if (avatar != null && !avatar.trim().isEmpty()) {
+            customer.setAvatar(avatar);
+            needUpdate = true;
+        }
+        if (gender != null) {
+            customer.setGender(gender);
+            needUpdate = true;
+        }
+
+        if (!needUpdate) {
+            return;
+        }
+
+        customer.setUpdateTime(LocalDateTime.now());
+        int result = customerMapper.updateInfo(customer);
+        if (result <= 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新用户信息失败");
+        }
+    }
 }

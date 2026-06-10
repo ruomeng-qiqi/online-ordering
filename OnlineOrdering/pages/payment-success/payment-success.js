@@ -9,12 +9,13 @@ Page({
 
   onLoad(options) {
     const orderId = options.orderId
+    const orderNumber = options.orderNumber || ''
     const amount = options.amount || 0
     const points = options.points || 0
 
     this.setData({
       orderId,
-      orderNumber: `ORD${orderId}`,
+      orderNumber: orderNumber || `ORD${orderId}`,
       amount: parseFloat(amount).toFixed(2),
       points: parseInt(points)
     })

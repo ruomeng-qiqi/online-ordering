@@ -45,4 +45,9 @@ public interface DishService {
      * 更新菜品状态
      */
     void updateStatus(Long id, Integer status);
+
+    /**
+     * 根据分类查询菜品列表
+     */
+    List<DishVO> listByCategoryId(Long categoryId);
 }

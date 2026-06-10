@@ -3,6 +3,10 @@ package com.ruomeng.onlineorderingbackend.interceptor;
 import com.ruomeng.onlineorderingbackend.constant.JwtConstant;
 import com.ruomeng.onlineorderingbackend.exception.BusinessException;
 import com.ruomeng.onlineorderingbackend.exception.ErrorCode;
+import com.ruomeng.onlineorderingbackend.mapper.AdminMapper;
+import com.ruomeng.onlineorderingbackend.mapper.CustomerMapper;
+import com.ruomeng.onlineorderingbackend.model.entity.Admin;
+import com.ruomeng.onlineorderingbackend.model.entity.Customer;
 import com.ruomeng.onlineorderingbackend.utils.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private CustomerMapper customerMapper;
+
+    @Autowired
+    private AdminMapper adminMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -51,11 +61,39 @@ public class JwtInterceptor implements HandlerInterceptor {
             Long userId = jwtUtil.getUserIdFromToken(token);
             String username = jwtUtil.getUsernameFromToken(token);
             
+            // 5. 根据请求路径判断是管理员还是用户，并检查账号状态
+            String requestPath = request.getRequestURI();
+            
+            if (requestPath.startsWith("/admin")) {
+                // 管理员请求 - 检查管理员是否存在
+                Admin admin = adminMapper.selectById(userId);
+                if (admin == null) {
+                    log.warn("管理员不存在，adminId: {}", userId);
+                    throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "管理员不存在");
+                }
+                // 注意：管理员表没有 status 字段，所以不需要检查状态
+            } else if (requestPath.startsWith("/user")) {
+                // 用户请求 - 检查顾客是否存在及账号状态
+                Customer customer = customerMapper.selectById(userId);
+                if (customer == null) {
+                    log.warn("顾客不存在，customerId: {}", userId);
+                    throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "顾客不存在");
+                }
+                
+                if (customer.getStatus() == 0) {
+                    log.warn("顾客账号已被禁用，customerId: {}", userId);
+                    throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "您的账号已被禁用");
+                }
+            }
+            
             request.setAttribute(JwtConstant.USER_ID, userId);
             request.setAttribute(JwtConstant.USERNAME, username);
             
             log.info("Token 验证成功，用户ID: {}, 用户名: {}", userId, username);
             return true;
+        } catch (BusinessException e) {
+            // 重新抛出业务异常
+            throw e;
         } catch (Exception e) {
             log.error("Token 解析失败", e);
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "Token 解析失败");

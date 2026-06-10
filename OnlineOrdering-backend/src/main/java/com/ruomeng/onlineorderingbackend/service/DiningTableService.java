@@ -41,4 +41,9 @@ public interface DiningTableService {
      * 分页查询餐台
      */
     PageResult pageQuery(DiningTablePageQueryDTO diningTablePageQueryDTO);
+
+    /**
+     * 根据餐台号查询餐台
+     */
+    DiningTableVO getByTableNumber(String tableNumber);
 }

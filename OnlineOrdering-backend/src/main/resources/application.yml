@@ -14,6 +14,11 @@ spring:
   profiles:
     include: local
 
+  # 文件最大上传大小
+  servlet:
+    multipart:
+      max-file-size: 2MB
+
 # MyBatis 配置
 mybatis:
   # mapper 配置文件

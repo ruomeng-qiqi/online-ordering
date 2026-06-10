@@ -260,7 +260,7 @@ const loadOrderDetail = async (id) => {
         createTime: data.createTime?.replace('T', ' ') || '',
         checkoutTime: data.checkoutTime?.replace('T', ' ') || null
       }
-      orderDetails.value = data.orderDetails || []
+      orderDetails.value = data.details || []
     }
   } catch (error) {
     ElMessage.error('获取订单详情失败')

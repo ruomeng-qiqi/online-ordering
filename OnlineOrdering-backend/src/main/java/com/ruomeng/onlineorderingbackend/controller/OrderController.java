@@ -5,7 +5,7 @@ import com.ruomeng.onlineorderingbackend.common.Result;
 import com.ruomeng.onlineorderingbackend.model.dto.OrderCancelDTO;
 import com.ruomeng.onlineorderingbackend.model.dto.OrderDTO;
 import com.ruomeng.onlineorderingbackend.model.dto.OrderPageQueryDTO;
-import com.ruomeng.onlineorderingbackend.model.vo.OrderDetailVO;
+import com.ruomeng.onlineorderingbackend.model.vo.OrderVO;
 import com.ruomeng.onlineorderingbackend.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,10 +41,10 @@ public class OrderController {
      */
     @ApiOperation("根据ID查询订单详情")
     @GetMapping("/{id}")
-    public Result<OrderDetailVO> getById(@PathVariable Long id) {
+    public Result<OrderVO> getById(@PathVariable Long id) {
         log.info("查询订单详情：{}", id);
-        OrderDetailVO orderDetailVO = orderService.getById(id);
-        return Result.success(orderDetailVO);
+        OrderVO orderVO = orderService.getById(id);
+        return Result.success(orderVO);
     }
 
     /**

@@ -1,7 +1,10 @@
 // pages/payment/payment.js
+const orderApi = require('../../api/order.js')
+
 Page({
   data: {
     orderId: null,
+    customerId: null,
     // 订单信息
     order: {
       id: null,
@@ -22,47 +25,90 @@ Page({
 
   onLoad(options) {
     const orderId = options.orderId
+    const customerId = wx.getStorageSync('customerId')
+    
+    if (!customerId) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录',
+        showCancel: false,
+        success: () => {
+          wx.switchTab({
+            url: '/pages/mine/mine'
+          })
+        }
+      })
+      return
+    }
+    
     if (orderId) {
       this.setData({ 
         orderId,
+        customerId,
         paymentMethod: 1  // 固定为微信支付
       })
       this.loadOrderInfo(orderId)
-      this.loadCustomerPoints()
+      this.loadCustomerPoints(customerId)
     }
   },
 
   // 加载订单信息
   loadOrderInfo(orderId) {
-    // TODO: 调用后端API获取订单信息
-    // GET /api/order/{id}
+    wx.showLoading({
+      title: '加载中...'
+    })
     
-    // 模拟数据
-    const mockOrder = {
-      id: orderId,
-      orderNumber: `ORD${orderId}`,
-      totalAmount: 64.00,
-      discountAmount: 0
-    }
+    orderApi.getOrderById(orderId).then(result => {
+      wx.hideLoading()
+      
+      const order = result.data
+      
+      // 不限制最多可使用积分
+      const maxPointsUsed = 999999
 
-    // 不限制最多可使用积分
-    const maxPointsUsed = 999999
-
-    this.setData({
-      order: mockOrder,
-      maxPointsUsed,
-      actualAmount: (mockOrder.totalAmount - mockOrder.discountAmount).toFixed(2)
+      this.setData({
+        order: {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          totalAmount: parseFloat(order.totalAmount),
+          discountAmount: parseFloat(order.discountAmount || 0)
+        },
+        maxPointsUsed,
+        actualAmount: (parseFloat(order.totalAmount) - parseFloat(order.discountAmount || 0)).toFixed(2)
+      })
+    }).catch(err => {
+      wx.hideLoading()
+      console.error('加载订单信息失败', err)
+      wx.showModal({
+        title: '加载失败',
+        content: err.message || '加载订单信息失败',
+        showCancel: false,
+        success: () => {
+          wx.navigateBack()
+        }
+      })
     })
   },
 
   // 加载顾客积分
-  loadCustomerPoints() {
-    // TODO: 调用后端API获取顾客积分
-    // GET /api/customer/points
-    
-    // 模拟数据
-    this.setData({
-      availablePoints: 1580
+  loadCustomerPoints(customerId) {
+    // 调用后端API获取顾客积分
+    wx.request({
+      url: getApp().globalData.baseUrl + '/user/customer/points',
+      method: 'GET',
+      header: {
+        'Authorization': 'Bearer ' + wx.getStorageSync('token')
+      },
+      success: (res) => {
+        if (res.data.code === 200) {
+          this.setData({
+            availablePoints: res.data.data || 0
+          })
+        }
+      },
+      fail: (err) => {
+        console.error('加载积分失败', err)
+      }
     })
   },
 
@@ -134,8 +180,8 @@ Page({
       pointsUsed: this.data.pointsUsed,
       pointsDeduction: parseFloat(this.data.pointsDeduction),
       actualAmount: parseFloat(this.data.actualAmount),
-      // 计算获得积分（实付金额的10%）
-      pointsEarned: Math.floor(parseFloat(this.data.actualAmount) * 0.1)
+      // 计算获得积分（1元=1积分，向下取整）
+      pointsEarned: Math.floor(parseFloat(this.data.actualAmount))
     }
 
     // 调起微信支付
@@ -148,49 +194,41 @@ Page({
       title: '支付中...'
     })
 
-    // TODO: 调用后端API获取支付参数
-    // POST /api/order/pay/wechat
+    // TODO: 实际项目中需要调用后端API获取微信支付参数
+    // 这里暂时模拟支付成功，直接调用支付接口
     
-    // 模拟微信支付
+    // 模拟微信支付成功后，调用后端支付接口
     setTimeout(() => {
-      wx.hideLoading()
-      
-      // TODO: 调起微信支付
-      // wx.requestPayment({
-      //   timeStamp: '',
-      //   nonceStr: '',
-      //   package: '',
-      //   signType: 'MD5',
-      //   paySign: '',
-      //   success: (res) => {
-      //     this.paymentSuccess(paymentData)
-      //   },
-      //   fail: (err) => {
-      //     wx.showToast({
-      //       title: '支付失败',
-      //       icon: 'none'
-      //     })
-      //   }
-      // })
-
-      // 模拟支付成功
-      this.paymentSuccess(paymentData)
+      this.submitPayment(paymentData)
     }, 1000)
   },
 
-  // 支付成功
-  paymentSuccess(paymentData) {
-    wx.showToast({
-      title: '支付成功',
-      icon: 'success',
-      duration: 1500
-    })
-
-    // 跳转到支付成功页面
-    setTimeout(() => {
-      wx.redirectTo({
-        url: `/pages/payment-success/payment-success?orderId=${this.data.orderId}&amount=${paymentData.actualAmount}&points=${paymentData.pointsEarned}`
+  // 提交支付结果到后端
+  submitPayment(paymentData) {
+    orderApi.payOrder(paymentData).then(() => {
+      wx.hideLoading()
+      
+      wx.showToast({
+        title: '支付成功',
+        icon: 'success',
+        duration: 1500
       })
-    }, 1500)
+
+      // 跳转到支付成功页面
+      setTimeout(() => {
+        wx.redirectTo({
+          url: `/pages/payment-success/payment-success?orderId=${this.data.orderId}&orderNumber=${this.data.order.orderNumber}&amount=${paymentData.actualAmount}&points=${paymentData.pointsEarned}`
+        })
+      }, 1500)
+    }).catch(err => {
+      wx.hideLoading()
+      console.error('支付失败', err)
+      
+      wx.showModal({
+        title: '支付失败',
+        content: err.message || '支付失败，请重试',
+        showCancel: false
+      })
+    })
   }
 })

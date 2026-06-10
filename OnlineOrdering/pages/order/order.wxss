@@ -171,6 +171,12 @@
   color: #666;
 }
 
+.secondary-btn {
+  border-color: #ff6b35;
+  color: #ff6b35;
+  background-color: #fff;
+}
+
 .primary-btn {
   border-color: #ff6b35;
   color: #fff;

@@ -340,7 +340,7 @@ const loadOrderData = async (id) => {
       }
       
       // 转换订单明细格式
-      orderDetails.value = (data.orderDetails || []).map(item => ({
+      orderDetails.value = (data.details || []).map(item => ({
         id: item.id,
         dishId: item.dishId,
         setmealId: item.setmealId,
