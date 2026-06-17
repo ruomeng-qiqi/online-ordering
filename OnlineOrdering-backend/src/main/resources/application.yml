@@ -45,8 +45,8 @@ knife4j:
 jwt:
   # 密钥（至少 32 个字符，256 位）
   secret: ruomeng-online-ordering-backend-jwt
-  # 过期时间（单位：秒，默认 2 小时）
-  expiration: 7200
+  # 过期时间（单位：秒，默认 7 天）
+  expiration: 86400
 
 # 日志配置
 logging:
